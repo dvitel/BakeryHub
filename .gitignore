@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs
+/Domain/bin
+/Domain/obj
+/Domain/appsettings.Development.json
