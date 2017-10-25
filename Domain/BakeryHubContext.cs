@@ -8,6 +8,8 @@ namespace BakeryHub.Domain
 {
     class BakeryHubContext : DbContext
     {
+
+        public int test;
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Delivery> Delivery { get; set; }
         public DbSet<Product> Products { get; set; }
