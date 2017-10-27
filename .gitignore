@@ -6,3 +6,8 @@
 /Domain/bin
 /Domain/obj
 /Domain/appsettings.Development.json
+/BakeryHubSite/bin
+/BakeryHubSite/obj
+/BakeryHubSite/wwwroot/lib
+/BakeryHubSite/wwwroot/js/site.min.js
+/BakeryHubSite/wwwroot/css/site.min.css
