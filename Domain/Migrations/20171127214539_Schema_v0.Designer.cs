@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171127214539_Schema_v0")]
+    partial class Schema_v0
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

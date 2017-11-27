@@ -1,0 +1,21 @@
+﻿@model List<Person>
+@{
+    ViewData["Title"] = "List";
+}
+
+<h2>List</h2>
+
+<div>
+@foreach (var name in Model) {
+    <div>@name.Name, @name.StudentId</div>
+
+}
+</div>
+<div>
+    <form method="post">
+        <label for="Name">Student name</label>: <input type="text" id="Name" name="Name"/> <br/>
+        <label for="Name">Student id</label>: <input type="text" id="StudentId" name="StudentId" />
+        <input type="submit" value="Save" />
+    </form>
+</div>
+
