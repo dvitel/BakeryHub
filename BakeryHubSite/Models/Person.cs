@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BakeryHubSite.Models
+namespace BakeryHub.Models
 {
     public class Person
     {

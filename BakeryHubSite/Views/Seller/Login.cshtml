@@ -1,0 +1,38 @@
+﻿@model LoginData
+@{
+    ViewData["Title"] = "Seller login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="bottom-2ex">Login as seller...<br/>
+    <small>Customize your products, see orders, etc...</small>
+</h2>    
+<div class="row">
+    <form asp-action="Login" method="post" class="form-horizontal col-sm-8 col-md-6">
+        <div class="form-group">
+            <label asp-for="Login" class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="RememberMe" class="col-sm-offset-2 col-sm-10">
+                <input asp-for="RememberMe" /> Remember me
+            </label>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <input asp-for="Redirect" />
+            </div>
+        </div>
+    </form>
+</div>

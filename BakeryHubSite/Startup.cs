@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 
-namespace BakeryHubSite
+namespace BakeryHub
 {
     public class Startup
     {
@@ -21,6 +24,38 @@ namespace BakeryHubSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDataProtection()
+                .SetApplicationName("BakeryHub");
+                //.TODO: persist key in Azure of shared vault 
+                //.PersistKeysToFileSystem(new DirectoryInfo(@"\\server\share\directory\"))
+            services.AddDbContext<BakeryHub.Domain.BakeryHubContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAuthentication()
+                .AddCookie("S-Cookie", opt =>
+                {
+                    opt.Cookie.Name = "S-Cookie";
+                    opt.Cookie.Path = "/Seller";
+                    opt.LoginPath = "/Seller/Login";
+                    opt.LogoutPath = "/Seller/Logout";
+                    opt.ReturnUrlParameter = "r";
+                    opt.AccessDeniedPath = "/Error/AccessDenied";
+                    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+                })
+                .AddCookie("C-Cookie", opt =>
+                {
+                    opt.Cookie.Name = "C-Cookie";
+                    opt.Cookie.Path = "/Client";
+                    opt.LoginPath = "/Client/Login";
+                    opt.LogoutPath = "/Client/Logout";
+                    opt.ReturnUrlParameter = "r";
+                    opt.AccessDeniedPath = "/Error/AccessDenied";
+                    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+                });
+            services.AddAuthorization(opts =>
+            {
+                opts.AddPolicy("Seller", p => p.RequireClaim("Seller"));
+                opts.AddPolicy("Client", p => p.RequireClaim("Client"));
+            });
             services.AddMvc();
         }
 
@@ -34,10 +69,12 @@ namespace BakeryHubSite
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RootNamespace>BakeryHub</RootNamespace>
+    <AssemblyName>BakeryHub.WebUI</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

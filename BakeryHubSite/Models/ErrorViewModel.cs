@@ -1,6 +1,6 @@
 using System;
 
-namespace BakeryHubSite.Models
+namespace BakeryHub.Models
 {
     public class ErrorViewModel
     {

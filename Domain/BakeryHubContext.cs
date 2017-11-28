@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BakeryHub.Domain
 {
-    class BakeryHubContext : DbContext
+    public class BakeryHubContext : DbContext
     {
         public DbSet<CountryState> States { get; set; }
         public DbSet<User> Users { get; set; }
@@ -61,6 +61,10 @@ namespace BakeryHub.Domain
                 .Property(u => u.Password)
                 .IsRequired(true)
                 .HasMaxLength(100);
+            modelBuilder
+                .Entity<User>()
+                .HasIndex(u => u.Login);
+
             //Supplier entity
             modelBuilder
                 .Entity<Supplier>()

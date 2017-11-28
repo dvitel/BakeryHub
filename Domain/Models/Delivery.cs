@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BakeryHub.Domain.Models
 {
-    class Delivery
+    public class Delivery
     {
         public enum DeliveryState { InProgress, Shipped, Delivered }
         public int OrderId { get; set; } //what
