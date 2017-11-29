@@ -1,11 +1,58 @@
-﻿
+﻿@model SellerDashboard
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Seller";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>View</h2>
-<div>
-    TODO: products
-</div>
+@section Scripts {
+    <style>
+        .productImg {
+            width: 300px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .productImg img {
+            left: -50%;
+            position: absolute;
+            margin-left: -200px;
+        }
+    </style>
+}
+
+<h2>Products<br/>
+    <small>These are your products for selling...</small>
+    </h2>
+<hr/>
+
+@if (Model.Products.Count > 0)
+{
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            var mainImagePath = product.Images.Count > 0 ? product.Images[0].LogicalPath : "/products/placeholder.png";
+            <div class="col-md-2">
+                <div>
+                    <div class="productImg">
+                        <img src="@mainImagePath" alt="@product.Name" />
+                    </div>
+                    <div class="productText">
+                        <span>@product.Name</span>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+} else
+{
+    <div>
+        <span>You do not have any products yet.</span>
+        <div>
+            <a href="/Seller/Product" class="btn btn-primary">Register first product...</a>
+        </div>
+    </div>
+}
 

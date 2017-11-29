@@ -1,0 +1,49 @@
+﻿@model RegisterData
+@{
+    ViewData["Title"] = "Seller registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Seller registration...
+    <br/>
+    <small>Complete next steps to register your products...</small>
+</h2>
+<hr />
+<div class="row">
+    <form asp-action="Register" method="post" class="form-horizontal col-sm-7">
+        <div class="form-group">
+            <label asp-for="Email" class="control-label col-sm-3">Email:</label>
+            <div class="col-sm-8">
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Login" class="control-label col-sm-3">Login:</label>
+            <div class="col-sm-8">
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="control-label col-sm-3">Password:</label>
+            <div class="col-sm-8">
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="RepeatPassword" class="control-label col-sm-3">Repeat password:</label>
+            <div class="col-sm-8">
+                <input asp-for="RepeatPassword" class="form-control" />
+                <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-8">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </form>
+</div>
+

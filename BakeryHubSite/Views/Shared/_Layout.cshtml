@@ -34,6 +34,24 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
+                @if (User.Identity.IsAuthenticated)
+                {
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="navbar-text">
+                        Logged in as <b>@User.FindFirst(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</b>
+                    </li>
+                    <li><a href="/Account/Logout">Logout</a></li>
+                </ul>
+                }
+                else
+                {
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="/Seller/Register">Become seller</a>
+                        </li>
+                        <li><a href="/Account/Login">SignIn</a></li>
+                    </ul>
+                }
             </div>
         </div>
     </nav>

@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171128215453_User_Supplier_Customer_fix")]
+    partial class User_Supplier_Customer_fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,11 +325,15 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<int>("ImageId");
 
-                    b.Property<string>("LogicalPath");
+                    b.Property<int>("Height");
+
+                    b.Property<bool>("IsMain");
 
                     b.Property<string>("Mime");
 
                     b.Property<string>("Path");
+
+                    b.Property<int>("Width");
 
                     b.HasKey("SupplierId", "ProductId", "ImageId");
 
@@ -367,10 +372,6 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(400);
-
-                    b.Property<bool>("HasLogo")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsCompany");
 

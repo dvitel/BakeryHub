@@ -3,6 +3,20 @@
     padding-bottom: 20px;
 }
 
+.imgHolder {
+    width: 150px;    
+    height: 150px;
+    display: inline-block;
+    border: 1px solid gray;
+    background: url("../images/logoPlaceholder.png") center center no-repeat;
+    cursor:pointer;
+    background-size:cover;
+}
+
+.nameHolder, .descHolder {
+    margin-bottom: 2ex;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -34,6 +48,20 @@
     }
 }
 
-.bottom-2ex {
-    margin-bottom: 2ex;
+.productMainImage {
+    width: 100%;
+    height: 300px;
+    border: 1px solid gray;
+    background: url("../products/placeholder.png") center center no-repeat;
+    cursor: pointer;
+    background-size: cover;
+}
+
+.productImage {
+    width: 100%;
+    height: 100px;
+    border: 1px solid gray;
+    background: url("../products/placeholder.png") center center no-repeat;
+    cursor: pointer;
+    background-size: cover;
 }

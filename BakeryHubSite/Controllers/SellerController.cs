@@ -12,161 +12,269 @@ using System.IO;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace BakeryHub.Controllers
 {
+    
     public class SellerController : Controller
     {
         BakeryHubContext db;
         IConfiguration config;
-        public SellerController(BakeryHubContext context, IConfiguration configuration) => 
-            (db, config) = (context, configuration);
+        IHostingEnvironment env;
+        public SellerController(BakeryHubContext context, IConfiguration configuration, IHostingEnvironment envi) => 
+            (db, config, env) = (context, configuration, envi);
 
-        [Authorize(Policy = "Seller", AuthenticationSchemes = "S-Cookie")]
-        public IActionResult Index() => View();
+        [Authorize(Policy = "Seller", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Index()
+        {
+            var userId = int.Parse(User.FindFirstValue("Id"));
+            var products = 
+                await 
+                    (from p in db.Products
+                     where p.SupplierId == userId
+                     select p).ToListAsync();
+            var productImages =
+                await
+                    (from i in db.ProductImages
+                     where i.SupplierId == userId
+                     select i).ToListAsync();
+            var groupedImages =
+                productImages.GroupBy(i => (i.SupplierId, i.ProductId)).ToDictionary(kv => kv.Key, kv => kv.ToList());
+            foreach (var product in products)
+            {
+                var key = (product.SupplierId, product.ProductId);
+                if (groupedImages.ContainsKey(key))
+                {
+                    product.Images = groupedImages[key];
+                }
+                else
+                    product.Images = new List<ProductImage>(); 
+            }
+            return View(new SellerDashboard { Products = products });
+        }
 
         [HttpGet]
-        public IActionResult Login(string r) => View(new LoginData { Redirect = r });
-
-        private string GenerateSalt()
+        [Authorize(Policy = "Seller", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Product(int? id)
         {
-            return Guid.NewGuid().ToString();
-        }
-        private string MD5Password(string password, string salt)
-        {
-            using (var md5 = MD5.Create())
+            var userId = int.Parse(User.FindFirstValue("Id"));
+            var categories =
+                await (from c in db.ProductCategories select c).ToListAsync();
+            if (id.HasValue)
             {
-                var bytes = md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password + " " + salt));
-                return BitConverter.ToString(bytes);
-            }
-        }
-        private string DESPassword(string password, string salt)
-        {
-            using (var des = TripleDES.Create())
-            {
-                des.Key = Convert.FromBase64String(config["DESPassword:Key"]);
-                des.IV = Convert.FromBase64String(config["DESPassword:Vect"]);
-                des.Mode = CipherMode.CBC;
-                des.Padding = PaddingMode.None;
-                using (var enc = des.CreateEncryptor())
+                var product =
+                    await
+                        (from p in db.Products
+                         where p.SupplierId == userId && p.ProductId == id.Value
+                         select p).FirstOrDefaultAsync();
+                if (product == null)
                 {
-                    using (var memory = new MemoryStream()) {
-                        using (var cstream = new CryptoStream(memory, enc, CryptoStreamMode.Write))
-                        {
-                            var bytes = System.Text.Encoding.UTF8.GetBytes(password + " " + salt);
-                            cstream.Write(bytes, 0, bytes.Length);
-                        }
-                        return Convert.ToBase64String(memory.ToArray());
-                    }
-                }
-            }
-        }
-        private bool ValidatePassword(User dbUser, LoginData login)
-        {
-            if (dbUser.PasswordEncryptionAlgorithm == Domain.User.PasswordEncryption.Plain
-                && dbUser.Password == login.Password)
-                return true;
-            if (dbUser.PasswordEncryptionAlgorithm == Domain.User.PasswordEncryption.MD5
-                && dbUser.Password == MD5Password(login.Password, dbUser.Salt))
-                return true;
-            if (dbUser.PasswordEncryptionAlgorithm == Domain.User.PasswordEncryption.DES
-                && dbUser.Password == DESPassword(login.Password, dbUser.Salt))
-                return true;
-            return false;
-        }
-
-        private (Domain.User.PasswordEncryption, string, string) ComputePassword(RegisterData reg)
-        {
-            if (config["PasswordEncMethod"] == "DES")
-            {
-                var salt = GenerateSalt();
-                var pwd = DESPassword(reg.Password, salt);
-                return (Domain.User.PasswordEncryption.DES, pwd, salt);
-            }
-            if (config["PasswordEncMethod"] == "MD5")
-            {
-                var salt = GenerateSalt();
-                var pwd = MD5Password(reg.Password, salt);
-                return (Domain.User.PasswordEncryption.DES, pwd, salt);
-            }
-            return (Domain.User.PasswordEncryption.Plain, reg.Password, "");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginData loginForm)
-        {
-            //TODO: login process
-            if (ModelState.IsValid)
-            {
-                //fetch user from db 
-                var user =
-                    await 
-                        (from u in db.Users
-                         where u.Login == loginForm.Login 
-                         select u).FirstOrDefaultAsync();
-
-                //TODO: in separate service - IPasswordValidator
-                if (ValidatePassword(user, loginForm))
-                {
-                    //TODO: in separate cookie provider
-                    //creating auth cookie
-                    var claims =
-                        new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.Login),
-                            new Claim("Id", user.Id.ToString()),
-                            new Claim("Seller", "1"),
-                        };
-                    var identity = new ClaimsIdentity(claims, "S-Cookie");
-                    await HttpContext.SignInAsync("S-Cookie", new ClaimsPrincipal(identity), 
-                        new AuthenticationProperties { IsPersistent = loginForm.RememberMe });
-
-                    if (String.IsNullOrEmpty(loginForm.Redirect))
-                        return RedirectToAction("Index");
-                    else
-                        return Redirect(loginForm.Redirect);
+                    //TODO: general error message
+                    return RedirectToAction("Index");
                 } else
                 {
-                    ModelState.AddModelError("Login", "Login/password pair is incorrect");
+                    var images =
+                        await (from i in db.ProductImages where i.ProductId == id.Value select i).ToListAsync();
+                    return View(new ProductViewModel {
+                        ProductId = product.ProductId,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        AvailableInStore = product.AvailableNow,
+                        ImagePathes =
+                            images.Select(i => i.LogicalPath).ToList(),
+                        CategoryId = product.CategoryId,
+                        Categories = categories
+                    });
                 }
             }
-            return View();
+            return View(new ProductViewModel { Categories = categories });
         }
 
-        public async Task<IActionResult> Logout(string r)
+        private async Task<IList<ProductImage>> SaveImages(int userId, int productId, IList<IFormFile> files)
         {
-            await HttpContext.SignOutAsync("S-Cookie");
-            if (String.IsNullOrEmpty(r))
+            var productImages = new List<ProductImage>();
+            for (var i = 0; i < files.Count; i++)
+            {
+                var ext = Path.GetExtension(files[i].FileName);
+                var path = Path.Combine(env.WebRootPath, "products", $"{userId}_{i}{ext}");
+                var logicalPath = $"/products/{userId}_{i}{ext}";
+                using (var file = System.IO.File.OpenWrite(path))
+                {
+                    await files[i].CopyToAsync(file);
+                }
+                productImages.Add(new ProductImage
+                {
+                    SupplierId = userId,
+                    ProductId = productId,
+                    ImageId = i,
+                    Path = path,
+                    LogicalPath = logicalPath,
+                    Mime = files[i].ContentType
+                });
+            }
+            return productImages;
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "Seller", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Product(ProductViewModel productModel)
+        {
+            var userId = int.Parse(User.FindFirstValue("Id"));
+            if (ModelState.IsValid)
+            {
+                if (productModel.ProductId.HasValue)
+                {
+                    //update
+                    var product = await (from p in db.Products
+                                         where p.SupplierId == userId && p.ProductId == productModel.ProductId.Value
+                                         select p).FirstOrDefaultAsync();
+                    if (product == null)
+                    {
+                        //TODO: error message in cookies
+                        return RedirectToAction("Index");
+                    } else
+                    {
+                        var productImages =
+                            await (from p in db.ProductImages
+                                   where p.SupplierId == userId && p.ProductId == productModel.ProductId.Value
+                                   select p).ToListAsync();
+                        product.Name = productModel.Name;
+                        product.Description = productModel.Description;
+                        product.AvailableNow = productModel.AvailableInStore;
+                        product.Price = productModel.Price;
+                        product.CategoryId = productModel.CategoryId;
+                        product.Images = await SaveImages(userId, product.ProductId, productModel.Images);
+                        db.ProductImages.RemoveRange(productImages);
+                        db.Products.Update(product);
+                        await db.SaveChangesAsync();
+                    }
+                } else
+                {
+                    //insert
+                    var maxProductId =
+                        await (from p in db.Products select p.ProductId).DefaultIfEmpty(0).MaxAsync();
+
+                    var product =
+                        new Product
+                        {
+                            SupplierId = userId,
+                            ProductId = maxProductId + 1,
+                            AvailableNow = productModel.AvailableInStore,
+                            Name = productModel.Name,
+                            Description = productModel.Description,
+                            Price = productModel.Price,
+                            Images = await SaveImages(userId, maxProductId + 1, productModel.Images),
+                            CategoryId = productModel.CategoryId
+                        };
+
+                    await db.Products.AddAsync(product);
+                    await db.SaveChangesAsync();
+                }
                 return RedirectToAction("Index");
-            else
-                return Redirect(r);
+            }
+            productModel.Categories = 
+                await (from c in db.ProductCategories select c).ToListAsync();
+            return View(productModel);
         }
 
         [HttpGet]
-        public IActionResult Register() => View(new RegisterData());
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Register() {
+            if (User.FindFirstValue("Seller") == "1")
+                return RedirectToAction("Index");
+            return View(new SellerRegistration {
+                States = await (from s in db.States select s).ToListAsync(),
+                Contacts = new List<SellerContact>
+                {
+                    new SellerContact { Type = ContactType.Email.ToString() }
+                }
+            });
+        }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterData register)
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Register(SellerRegistration sellerRegistration)
         {
+            if (User.FindFirstValue("Seller") == "1")
+                return RedirectToAction("Index");
+            var userId = int.Parse(User.FindFirstValue("Id"));
+            var states = await (from s in db.States select s).ToListAsync();
+            if (!states.Any(state => state.Code == sellerRegistration.StateId))
+                ModelState.AddModelError("StateId", "Specified unknown state");
+            if (sellerRegistration.Contacts == null || sellerRegistration.Contacts.Count == 0)
+            {
+                ModelState.AddModelError("Contacts[0]", "Should specify at least one contact");
+            }
             if (ModelState.IsValid)
             {
-                //check duplicates in db 
-                var similar =
-                    await 
-                        (from u in db.Users
-                         where u.Login == register.Login
-                         select u).CountAsync();
-                if (similar > 0)
-                    ModelState.AddModelError("Login", "Login is being used by other user");
-                var (alg, pwd, salt) = ComputePassword(register);
-                await db.Users.AddAsync(new Domain.User { Login = register.Login, Password = pwd, Salt = salt, PasswordEncryptionAlgorithm = alg });
-                await db.SaveChangesAsync();
-                return RedirectToAction("Login");
+                var logoPath = "";
+                if (sellerRegistration.Logo != null) {
+                    var logoLogicalPath = Path.Combine($"logos", $"{userId}{Path.GetExtension(sellerRegistration.Logo.FileName)}");
+                    logoPath = Path.Combine(env.WebRootPath, logoLogicalPath);
+                }
+                var seller =
+                    new Supplier
+                    {
+                        Id = userId,
+                        Name = sellerRegistration.Name,
+                        Description = sellerRegistration.Description,
+                        HasLogo = logoPath != "",
+                        IsCompany = sellerRegistration.IsCompany,
+                        Addresses = new List<SupplierAddress>
+                        {
+                            new SupplierAddress
+                            {
+                                SupplierId = userId,
+                                AddressId = 0,
+                                City = sellerRegistration.City,
+                                StateId = sellerRegistration.StateId,
+                                isUIVisible = true,
+                                Street = sellerRegistration.Street,
+                                Zip = sellerRegistration.Zip
+                            }
+                        },
+                        Contacts =
+                            sellerRegistration.Contacts.Select((c, i) =>
+                                new SupplierContact
+                                {
+                                    SupplierId = userId,
+                                    ContactId = i,
+                                    Address = c.Address,
+                                    Name = c.Name,
+                                    IsConfirmed = false,
+                                    IsUIVisible = true,
+                                    Type = Enum.Parse<ContactType>(c.Type)
+                                }
+                            ).ToList()
+                    };
+                using (var tran = await db.Database.BeginTransactionAsync())
+                {
+                    await db.Suppliers.AddAsync(seller);
+                    await db.SaveChangesAsync();
+                    if (logoPath != "")
+                        using (var file = System.IO.File.OpenWrite(logoPath))
+                        {
+                            await sellerRegistration.Logo.CopyToAsync(file);
+                        }
+                    var claims = new List<Claim>(User.Claims);
+                    claims.Add(new Claim("Seller", "1"));
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(new ClaimsIdentity(claims)),
+                            new AuthenticationProperties { IsPersistent = User.FindFirstValue("Persistent") == "1" });
+                    tran.Commit();
+                }
+                return RedirectToAction("Index");
             }
             else
-                return View();
+            {
+                sellerRegistration.States = states;
+                return View(sellerRegistration);
+            }
         }
     }
 }

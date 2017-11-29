@@ -1,48 +1,185 @@
-﻿@model RegisterData
+﻿@model SellerRegistration
 @{
-    ViewData["Title"] = "Seller registration";
+    ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="bottom-2ex">Seller registration...
-    <br/>
-    <small>Complete next steps to register your products...</small>
-</h2>
-<div class="row">
-    <form asp-action="Register" method="post" class="form-horizontal col-sm-7">
+@section Scripts {
+    <script>
+        $(function () {
+            $("#imgHolder").click(function () {
+                $("#Logo").click();
+            });
+            $("#Logo").change(function () {                
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imgHolder').css('background-image', "url(" + e.target.result + ")");
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            var addContactButton = $("#addNewContact");
+            function contactAddressChange() {
+                if ($(".contactName,.contactAddress").filter(function () { return !$(this).val(); }).length > 0) {
+                    addContactButton.prop("disabled", true).addClass("disabled");
+                } else {
+                    addContactButton.prop("disabled", false).removeClass("disabled");
+                }
+            }
+            $(".contactName,.contactAddress").change(contactAddressChange);
+            function deleteContactRow() {
+                var group = $(this).closest("[data-contact-id]");
+                var id = parseInt(group.attr("data-contact-id"));
+                group.remove();
+                var groups =
+                    $("[data-contact-id]").each(function () {
+                        var i = parseInt($(this).attr("data-contact-id"));
+                        if (i > id) {
+                            $(this).attr("data-contact-id", i - 1);
+                            $(this).find("[name]").each(function () {
+                                $(this).attr("name", $(this).attr("name").replace(i.toString(), (i - 1).toString()));
+                            })
+                        }
+                    });
+                if (groups.length == 1) {
+                    $(".deleteContact").prop("disabled", true).addClass("disabled");
+                }
+            }
+            addContactButton.click(function () {
+                var lastGroup = $("[data-contact-id]").last()
+                var group = lastGroup.clone();
+                group.find(".deleteContact").click(deleteContactRow);
+                group.find(".contactName,.contactAddress").change(contactAddressChange);
+                lastGroup.after(group);
+                var cId = parseInt(lastGroup.attr("data-contact-id"));
+                var newId = cId + 1;
+                group.attr("data-contact-id", newId);  
+                group.find("[name]").each(function () {
+                    $(this).attr("name", $(this).attr("name").replace(cId.toString(), newId.toString()))
+                        .each(function () {
+                            if ($(this).is("input")) {
+                                $(this).val("");
+                            }
+                        })
+                })
+                $(".deleteContact").prop("disabled", false).removeClass("disabled");
+                addContactButton.prop("disabled", true).addClass("disabled");
+            });
+            $(".deleteContact").click(deleteContactRow);
+        })
+    </script>
+}
+
+<h2>Register as seller...<br/>
+    <small>To start providing your products for others, seller should be approved first</small>
+    </h2>
+<hr/>
+<div>
+    <form asp-action="Register" method="post" class="form-horizontal" enctype="multipart/form-data">
         <div class="form-group">
-            <label asp-for="Email" class="control-label col-sm-3">Email:</label>
-            <div class="col-sm-8">
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="col-md-2 col-sm-3 text-right">
+                <div class="imgHolder" id="imgHolder">
+                </div>
+                <input asp-for="Logo" type="file" style="display:none" />
+            </div>
+            <div class="col-md-7 col-sm-6">
+                <div class="nameHolder">
+                    <input asp-for="Name" class="form-control input-lg" placeholder="Company name here" />
+                    <span asp-validation-for="Name"></span>
+                </div>
+                <div class="descHolder">
+                    <textarea asp-for="Description" class="form-control input-sm" rows="7" placeholder="Describe your company and your products. &#10;Provide your target goals. &#10;Inform users about unique features."></textarea>
+                </div>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                        <input type="radio" name="IsCompany" id="option1" value="True" autocomplete="off" checked> Is company
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="IsCompany" id="option2" value="False" autocomplete="off"> Is personal
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Business address<br/>
+                <small>The address for contacts, public visible for clients</small>
+            </h2>
+        </div>
+        <hr/>
+        <div class="form-group">
+            <label asp-for="Street" class="control-label col-md-2 col-sm-3">Street: </label>
+            <div class="col-sm-6 col-md-7">
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Login" class="control-label col-sm-3">Login:</label>
-            <div class="col-sm-8">
-                <input asp-for="Login" class="form-control" />
-                <span asp-validation-for="Login" class="text-danger"></span>
+            <label asp-for="City" class="control-label col-md-2 col-sm-3">City: </label>
+            <div class="col-sm-4 col-md-5">
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City"></span>                
+            </div>
+            <div class="col-sm-2 col-md-2">
+                <select asp-for="StateId" class="form-control" style="max-width:15em" asp-items="Model.States.Select(c => new SelectListItem { Value = c.Code, Text = c.Name })"></select>
+                <span asp-validation-for="StateId"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Password" class="control-label col-sm-3">Password:</label>
-            <div class="col-sm-8">
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <label asp-for="Zip" class="control-label col-md-2 col-sm-3">ZIP: </label>
+            <div class="col-sm-6 col-md-7">
+                <input asp-for="Zip" class="form-control" />
+                <span asp-validation-for="Zip"></span>        
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="RepeatPassword" class="control-label col-sm-3">Repeat password:</label>
-            <div class="col-sm-8">
-                <input asp-for="RepeatPassword" class="form-control" />
-                <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+        <div>
+            <h2>
+                Business contacts<br />
+                <small>Each contact will be validated before seller approval</small>
+            </h2>
+        </div>
+        <hr />
+        @for (var i = 0; i < Model.Contacts.Count; i++)
+        {
+        <div class="form-group" data-contact-id="@i">
+            <div class="col-sm-2">
+                <select name="Contacts[@i].Type" class="form-control">
+                    <option value="Email" selected="@(Model.Contacts[i].Type == "Email")">Email</option>
+                    <option value="Mobile" selected="@(Model.Contacts[i].Type == "Mobile")">Mobile</option>
+                    <option value="Phone" selected="@(Model.Contacts[i].Type == "Phone")">Phone</option>
+                </select>
+                <span asp-validation-for="Contacts[i].Type"></span>
+            </div>
+            <div class="col-sm-3">
+                <input name="Contacts[@i].Name" class="contactName form-control" value="@(Model.Contacts[i].Name)" placeholder="Person name to contact with" />
+                <span asp-validation-for="Contacts[i].Name"></span>
+            </div>
+            <div class="col-sm-3">
+                <input name="Contacts[@i].Address" class="contactAddress form-control" value="@(Model.Contacts[i].Address)" placeholder="Email address or phone number" />
+                <span asp-validation-for="Contacts[i].Address"></span>
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-danger disabled deleteContact"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
             </div>
         </div>
+        }
         <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-8">
-                <button type="submit" class="btn btn-primary">Register</button>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-primary disabled" id="addNewContact"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new contact</button>
             </div>
+        </div>
+        <hr/>        
+        <div class="form-group">
+            <div class="col-sm-4">
+                <button type="submit" style="margin-right:1em" class="btn btn-primary btn-lg">Register as seller</button>
+                <button type="reset" class="btn btn-default btn-lg">Reset form</button>
+            </div>
+        </div>
+        <div>
+            <small>By submitting this form potential seller agrees to <b>Privacy Policy</b> and <b>Terms and Conditions</b></small>
         </div>
     </form>
 </div>
+
 

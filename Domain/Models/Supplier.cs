@@ -10,6 +10,7 @@ namespace BakeryHub.Domain
         public int Id { get; set; }
         public string Name{ get; set; }
         public string Description { get; set; }
+        public bool HasLogo { get; set; }
         public bool IsCompany { get; set; } 
         public User User { get; set; }
         public IList<SupplierAddress> Addresses { get; set; }

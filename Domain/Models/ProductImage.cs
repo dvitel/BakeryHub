@@ -10,9 +10,7 @@ namespace BakeryHub.Domain
         public int ProductId { get; set; }
         public int ImageId { get; set; }
         public string Path { get; set; }
+        public string LogicalPath { get; set; }
         public string Mime { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public bool IsMain { get; set; }
     }
 }

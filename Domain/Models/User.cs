@@ -12,5 +12,7 @@ namespace BakeryHub.Domain
         public string Password { get; set; }
         public PasswordEncryption PasswordEncryptionAlgorithm { get; set; }
         public string Salt { get; set; }
+        public Customer Customer { get; set; }
+        public Supplier Supplier { get; set; }
     }
 }

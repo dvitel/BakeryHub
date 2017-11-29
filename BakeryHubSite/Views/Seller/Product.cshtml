@@ -1,0 +1,101 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    <script>
+        var paths = @Json.Serialize(Model.ImagePathes);
+        $(function () {
+            $("#productMainImage").css('background-image', "url(" + paths[0] + ")");
+            for (var i = 1; i < paths.length; i++) {
+                $(".productImage").eq(i - 1).css('background-image', "url(" + paths[i] + ")");
+            }
+            $("#productMainImage, .productImage").click(function () {
+                $(this).next().click();
+            }).next()
+                .change(function () {
+                    if (this.files && this.files[0]) {
+                        var reader = new FileReader();
+                        var imgHolder = $(this).prev();
+                        reader.onload = function (e) {
+                            imgHolder.css('background-image', "url(" + e.target.result + ")");
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+            });
+        });
+    </script>
+}
+
+<h2>
+    Product details...<br />
+    <small>Specify images, description and price for your product</small>
+</h2>
+<hr />
+
+<form asp-action="Product" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <div class="form-group">
+        <div class="col-sm-5">
+            <div class="productMainImage" id="productMainImage">
+            </div>
+            <input asp-for="Images" type="file" style="display:none" />
+        </div>
+        <div class="col-sm-7">
+            <div class="nameHolder">
+                <input asp-for="Name" class="form-control input-lg" placeholder="Product name here" />
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div class="descHolder">
+                <textarea asp-for="Description" class="form-control input-sm" rows="7" placeholder="Full product description &#10;More details will make it more attractive"></textarea>
+            </div>
+            <div class="priceHolder">
+                <label asp-for="Price" class="control-label col-sm-1 text-right">Price: </label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input asp-for="Price" class="form-control" type="number" min="0.01" step="0.01" max="10000.00" placeholder="Price: $4.99" />
+                    </div>
+                    <span asp-validation-for="Price"></span>
+                </div>
+                <label asp-for="AvailableInStore" class="control-label col-sm-1 text-right">Avail.: </label>
+                <div class="col-sm-3">
+                    <input asp-for="AvailableInStore" class="form-control" type="number" min="0" step="1" value="0" />
+                    <span asp-validation-for="AvailableInStore"></span>
+                </div>
+                <label asp-for="CategoryId" class="control-label col-sm-1 text-right">Cat.: </label>
+                <div class="col-sm-3">
+                    <select asp-for="CategoryId" class="form-control" asp-items="Model.Categories.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() } )"></select>
+                    <span asp-validation-for="CategoryId"></span>
+                </div>
+            </div>
+            <div class="catHolder">
+
+            </div>
+        </div>
+    </div>    
+    <h2>
+        Additional images...<br />
+        <small>Could be up to 6</small>
+    </h2>
+    <hr />
+    <div class="form-group">
+        @for (int i = 1; i <= 6; i++)
+        {
+        <div class="col-sm-4 col-xs-12 col-md-2">
+            <div class="productImage">
+            </div>
+            <input asp-for="Images" type="file" style="display:none" />
+        </div>
+        }
+    </div>
+    <hr />
+    <div class="form-group">
+        <div class="col-sm-4">
+            <button type="submit" style="margin-right:1em" class="btn btn-primary btn-lg">Save product</button>
+            <button type="reset" class="btn btn-default btn-lg">Reset form</button>
+        </div>
+    </div>
+</form>
+

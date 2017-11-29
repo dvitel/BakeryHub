@@ -4,5 +4,5 @@ using System.Text;
 
 namespace BakeryHub.Domain
 {
-    public enum ContactType { Email, Text };
+    public enum ContactType { Email, Phone, Mobile };
 }

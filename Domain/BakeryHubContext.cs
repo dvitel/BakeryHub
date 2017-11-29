@@ -65,6 +65,20 @@ namespace BakeryHub.Domain
                 .Entity<User>()
                 .HasIndex(u => u.Login);
 
+            modelBuilder
+                .Entity<User>()
+                .HasOne(u => u.Supplier)
+                .WithOne(s => s.User)
+                .HasForeignKey<Supplier>(s => s.Id)
+                .HasPrincipalKey<User>(u => u.Id);
+
+            modelBuilder
+                .Entity<User>()
+                .HasOne(u => u.Customer)
+                .WithOne(c => c.User)
+                .HasForeignKey<Customer>(c => c.Id)
+                .HasPrincipalKey<User>(u => u.Id);
+
             //Supplier entity
             modelBuilder
                 .Entity<Supplier>()
@@ -76,12 +90,7 @@ namespace BakeryHub.Domain
                 .Property(s => s.Description)
                 .IsRequired(true)
                 .HasMaxLength(400);
-            modelBuilder
-                .Entity<Supplier>()
-                .HasOne(s => s.User)
-                .WithOne()
-                .HasForeignKey<Supplier>(s => s.Id);
-                //.OnDelete(DeleteBehavior.)
+
             modelBuilder
                 .Entity<Supplier>()
                 .HasMany(s => s.Addresses)
@@ -202,11 +211,6 @@ namespace BakeryHub.Domain
                 .Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(255);
-            modelBuilder
-                .Entity<Customer>()
-                .HasOne(c => c.User)
-                .WithOne()
-                .HasForeignKey<Customer>(c => c.Id);
             modelBuilder
                 .Entity<Customer>()
                 .HasMany(c => c.CartItems)
@@ -392,6 +396,10 @@ namespace BakeryHub.Domain
 
             modelBuilder.Entity<ProductImage>()
                 .HasKey(i => new { i.SupplierId, i.ProductId, i.ImageId });
+
+            modelBuilder.Entity<Supplier>()
+                .Property(s => s.HasLogo)
+                .HasDefaultValue(false);
 
             base.OnModelCreating(modelBuilder);
         }

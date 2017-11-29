@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using BakeryHub.Services;
 
 namespace BakeryHub
 {
@@ -31,31 +32,27 @@ namespace BakeryHub
             services.AddDbContext<BakeryHub.Domain.BakeryHubContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAuthentication()
-                .AddCookie("S-Cookie", opt =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opt =>
                 {
-                    opt.Cookie.Name = "S-Cookie";
-                    opt.Cookie.Path = "/Seller";
-                    opt.LoginPath = "/Seller/Login";
-                    opt.LogoutPath = "/Seller/Logout";
+                    opt.Cookie.Name = "Auth";
+                    opt.LoginPath = "/Account/Login";
+                    opt.LogoutPath = "/Account/Logout";
                     opt.ReturnUrlParameter = "r";
                     opt.AccessDeniedPath = "/Error/AccessDenied";
                     opt.ExpireTimeSpan = TimeSpan.FromDays(7);
-                })
-                .AddCookie("C-Cookie", opt =>
-                {
-                    opt.Cookie.Name = "C-Cookie";
-                    opt.Cookie.Path = "/Client";
-                    opt.LoginPath = "/Client/Login";
-                    opt.LogoutPath = "/Client/Logout";
-                    opt.ReturnUrlParameter = "r";
-                    opt.AccessDeniedPath = "/Error/AccessDenied";
-                    opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    opt.Events.OnRedirectToAccessDenied =
+                        rc =>
+                        {
+                            rc.RedirectUri = "/Seller/Register";
+                            return Task.CompletedTask;
+                        };
                 });
             services.AddAuthorization(opts =>
             {
                 opts.AddPolicy("Seller", p => p.RequireClaim("Seller"));
-                opts.AddPolicy("Client", p => p.RequireClaim("Client"));
             });
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ISMSService, SMSService>();
             services.AddMvc();
         }
 
