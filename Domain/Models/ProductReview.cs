@@ -6,12 +6,10 @@ namespace BakeryHub.Domain
 {
     public class ProductReview
     {
-        public int CustomerId { get; set; }
+        public Guid ReviewId { get; set; }
+        public int SupplierId { get; set; }
         public int ProductId { get; set; }
-        public DateTime Date { get; set; }
-        public string Feedback { get; set; }
-        public int Rating { get; set; }
-        public Customer Customer { get; set; }
-        public Product Product { get; set; }
+        public Review Review { get; set; }
+
     }
 }

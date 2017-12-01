@@ -4,14 +4,14 @@ using System.Text;
 
 namespace BakeryHub.Domain
 {
-    public class SupplierReview
+    public class Review
     {
-        public int CustomerId { get; set; }
-        public int SupplierId  { get; set; }
+        public Guid Id { get; set; }
+        public int UserId { get; set; }
         public DateTime Date { get; set; }
+        public int TargetUserId { get; set; }
         public string Feedback { get; set; }
         public int Rating { get; set; }
-        public Customer Customer { get; set; }
-        public Supplier Supplier { get; set; }
+        public bool IsAboutProduct { get; set; }
     }
 }

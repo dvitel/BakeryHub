@@ -4,17 +4,14 @@ using System.Text;
 
 namespace BakeryHub.Domain
 {
-    public class CardPaymentMethod
+    public class PaymentMethod
     {
-        public int CustomerId { get; set; }
+        public enum PaymentMethodType { Card, PayPal }
+        public int UserId { get; set; }
         public int PaymentMethodId { get; set; }
-        public string CardNumber { get; set; }
-        public string NameOnCard { get; set; }
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string StateId { get; set; }
-        public CountryState State { get; set; }
-        public string Country { get; set; }
-        public string Zip { get; set; }
+        public string UIDesc { get; set; }
+        public PaymentMethodType Type { get; set; }
+        public bool IsDeleted { get; set; }
+        public IList<Payment> Payments { get; set; }
     }
 }

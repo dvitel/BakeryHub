@@ -15,3 +15,8 @@
 /BakeryHubSite/ScaffoldingReadMe.txt
 /BakeryHubSite/wwwroot/products
 /BakeryHubSite/wwwroot/logos
+/BakeryHub.Test/bin/
+/BakeryHub.Test/obj/
+/BakeryHubSite/appsettings.json
+/BakeryHubSite/appsettings.Development.json
+/Domain/appsettings.json

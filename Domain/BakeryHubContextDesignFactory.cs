@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BakeryHub.Domain
@@ -11,11 +12,12 @@ namespace BakeryHub.Domain
     {
         public BakeryHubContext CreateDbContext(string[] args)
         {
-            var env = Environment.GetEnvironmentVariable("DB_ENV");
-            if (String.IsNullOrEmpty(env)) throw new Exception("Set DB_ENV to Development, Production or Staging before executing migrations");
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var configFile = String.Join(".", (new[] { "appsettings", env, "json" }).Where(s => !String.IsNullOrEmpty(s)));
+            System.Console.WriteLine($"ENVIRONMENT: {env ?? "Production"}; {configFile}");
             var config =
                 new ConfigurationBuilder()
-                    .AddJsonFile($"appsettings.{env}.json")
+                    .AddJsonFile(configFile)
                     .Build();
             var optionsBuilder = new DbContextOptionsBuilder<BakeryHubContext>();
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));

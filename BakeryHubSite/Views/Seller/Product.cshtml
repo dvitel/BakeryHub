@@ -8,9 +8,11 @@
     <script>
         var paths = @Json.Serialize(Model.ImagePathes);
         $(function () {
-            $("#productMainImage").css('background-image', "url(" + paths[0] + ")");
-            for (var i = 1; i < paths.length; i++) {
-                $(".productImage").eq(i - 1).css('background-image', "url(" + paths[i] + ")");
+            if ((paths != null) && (paths.length > 0)) {
+                $("#productMainImage").css('background-image', "url(" + paths[0] + ")");
+                for (var i = 1; i < paths.length; i++) {
+                    $(".productImage").eq(i - 1).css('background-image', "url(" + paths[i] + ")");
+                }
             }
             $("#productMainImage, .productImage").click(function () {
                 $(this).next().click();
@@ -95,6 +97,7 @@
         <div class="col-sm-4">
             <button type="submit" style="margin-right:1em" class="btn btn-primary btn-lg">Save product</button>
             <button type="reset" class="btn btn-default btn-lg">Reset form</button>
+            <input asp-for="ProductId" type="hidden"/>
         </div>
     </div>
 </form>

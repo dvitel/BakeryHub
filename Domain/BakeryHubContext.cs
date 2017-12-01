@@ -1,7 +1,7 @@
-﻿using BakeryHub.Domain.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BakeryHub.Domain
@@ -9,27 +9,33 @@ namespace BakeryHub.Domain
     public class BakeryHubContext : DbContext
     {
         public DbSet<CountryState> States { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Session> Session { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<SupplierAddress> SupplierAddress { get; set; }
-        public DbSet<SupplierContact> SupplierContacts { get; set; }
-        public DbSet<CustomerContactSubscription> SupplierSubscriptions { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<CustomerAddress> CustomerAddress { get; set; }
-        public DbSet<CustomerContact> CustomerContacts { get; set; }
-        public DbSet<CustomerContactSubscription> CustomerSubscriptions { get; set; }
-        public DbSet<CartItem> Carts { get; set; }    
-        public DbSet<SupplierReview> SupplierReviews { get; set; }
-        public DbSet<ProductReview> ProductReviews { get; set; }
-        public DbSet<Delivery> Delivery { get; set; }
         public DbSet<DeliverySite> DeliverySites { get; set; }
+        public DbSet<Address> Address { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<OrderSubscription> OrderSubscription { get; set; }        
+        public DbSet<FeedbackSubscription> FeedbackSubscription { get; set; }
+        public DbSet<ReportSubscription> ReportSubscription { get; set; }
+        public DbSet<Delivery> Delivery { get; set; }
+        public DbSet<Handshake> Handshake { get; set; }
+        public DbSet<HandshakeComment> HandshakeComments { get; set; }
+        public DbSet<NotificationLog> NotificationLog { get; set; }             
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderPaymentSensitiveInfo> OrderPaymentSensitiveInfo { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<CardPaymentMethod> PaymentMethods { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<CardPaymentMethod> CardPaymentMethods { get; set; }
+        public DbSet<PayPalPaymentMethod> PayPalPaymentMethods { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
         public BakeryHubContext(DbContextOptions<BakeryHubContext> opts) : base(opts)
         {
 
@@ -44,12 +50,44 @@ namespace BakeryHub.Domain
                 .Entity<CountryState>()
                 .Property(s => s.Code)
                 .IsRequired()
+                .IsUnicode(false)
                 .HasMaxLength(2);
             modelBuilder
                 .Entity<CountryState>()
                 .Property(s => s.Name)
                 .IsRequired()
+                .IsUnicode(false)
                 .HasMaxLength(100);
+            //Countries 
+            //States
+            modelBuilder
+                .Entity<Country>()
+                .HasKey(s => s.Code);
+            modelBuilder
+                .Entity<Country>()
+                .Property(s => s.Code)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasMaxLength(2);
+            modelBuilder
+                .Entity<Country>()
+                .Property(s => s.Name)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasMaxLength(100);
+
+            modelBuilder
+                .Entity<Session>()
+                .Property(s => s.IP)
+                .IsRequired()
+                .HasMaxLength(39);
+
+            modelBuilder
+                .Entity<Session>()
+                .Property(s => s.UserAgent)
+                .IsRequired()
+                .HasMaxLength(400);
+
             //User entity
             modelBuilder
                 .Entity<User>()
@@ -64,98 +102,171 @@ namespace BakeryHub.Domain
             modelBuilder
                 .Entity<User>()
                 .HasIndex(u => u.Login);
-
             modelBuilder
                 .Entity<User>()
                 .HasOne(u => u.Supplier)
                 .WithOne(s => s.User)
                 .HasForeignKey<Supplier>(s => s.Id)
                 .HasPrincipalKey<User>(u => u.Id);
-
             modelBuilder
                 .Entity<User>()
                 .HasOne(u => u.Customer)
                 .WithOne(c => c.User)
                 .HasForeignKey<Customer>(c => c.Id)
                 .HasPrincipalKey<User>(u => u.Id);
+            modelBuilder
+                .Entity<User>()
+                .HasOne(u => u.DeliverySite)
+                .WithOne(c => c.User)
+                .HasForeignKey<DeliverySite>(c => c.Id)
+                .HasPrincipalKey<User>(u => u.Id);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.Addresses)
+                .WithOne()
+                .HasForeignKey(a => a.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.Contacts)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.Payments)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.ReceivedPayments)
+                .WithOne()
+                .HasForeignKey(c => c.TargetUserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.PaymentMethods)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.CardPaymentMethod)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.PayPalPaymentMethod)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.Reviews)
+                .WithOne()
+                .HasForeignKey(s => s.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(s => s.ReceivedReviews)
+                .WithOne()
+                .HasForeignKey(s => s.TargetUserId);
 
             //Supplier entity
             modelBuilder
                 .Entity<Supplier>()
                 .Property(s => s.Name)
-                .IsRequired(true)
+                .IsRequired()
                 .HasMaxLength(100);
             modelBuilder
                 .Entity<Supplier>()
                 .Property(s => s.Description)
-                .IsRequired(true)
+                .IsRequired()
                 .HasMaxLength(400);
-
-            modelBuilder
-                .Entity<Supplier>()
-                .HasMany(s => s.Addresses)
-                .WithOne()
-                .HasForeignKey(a => a.SupplierId);
-            modelBuilder
-                .Entity<Supplier>()
-                .HasMany(s => s.Contacts)
-                .WithOne()
-                .HasForeignKey(c => c.SupplierId)
-                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder
                 .Entity<Supplier>()
                 .HasMany(s => s.Products)
                 .WithOne()
                 .HasForeignKey(s => s.SupplierId);
+
             modelBuilder
-                .Entity<Supplier>()
-                .HasMany(s => s.Reviews)
-                .WithOne(r => r.Supplier)
-                .HasForeignKey(s => s.SupplierId)
-                .HasPrincipalKey(s => s.Id);
+                .Entity<Address>()
+                .HasKey(a => new { a.UserId, a.AddressId });
             modelBuilder
-                .Entity<SupplierAddress>()
-                .HasKey(a => new { a.SupplierId, a.AddressId });
+                .Entity<Address>()
+                .Property(a => a.CountryId)
+                .IsUnicode(false);
             modelBuilder
-                .Entity<SupplierAddress>()
+                .Entity<Address>()
+                .Property(a => a.StateId)
+                .IsUnicode(false);
+            modelBuilder
+                .Entity<Address>()
                 .HasOne(a => a.State)
                 .WithOne()
-                .HasForeignKey<SupplierAddress>(a => a.StateId);
+                .HasForeignKey<Address>(a => a.StateId);
             modelBuilder
-                .Entity<SupplierAddress>(e =>
+                .Entity<Address>()
+                .HasOne(a => a.Country)
+                .WithOne()
+                .HasForeignKey<Address>(a => a.CountryId);
+            modelBuilder
+                .Entity<Address>(e =>
                 {
                     e.Property(a => a.City)
-                        .IsRequired(true)
+                        .IsRequired()
                         .HasMaxLength(100);
                     e.Property(a => a.Street)
-                        .IsRequired(true)
+                        .IsRequired()
                         .HasMaxLength(400);
                     e.Property(a => a.Zip)
                         .HasMaxLength(30);
                 });
+
             modelBuilder
-                .Entity<SupplierContact>()
+                .Entity<Contact>()
+                .HasKey(c => new { c.UserId, c.ContactId });
+            modelBuilder
+                .Entity<Contact>()
                 .Property(c => c.Address)
-                .IsRequired(true)
+                .IsRequired()
                 .HasMaxLength(255);
             modelBuilder
-                .Entity<SupplierContact>()
-                .HasKey(c => new { c.SupplierId, c.ContactId });
-            modelBuilder
-                .Entity<SupplierContact>()
-                .HasMany(c => c.Subscriptions)
+                .Entity<Contact>()
+                .HasMany(c => c.OrderSubscriptions)
                 .WithOne()
-                .HasForeignKey(s => new { s.SupplierId, s.ContactId })
-                .HasPrincipalKey(c => new { c.SupplierId, c.ContactId });
+                .HasForeignKey(s => new { s.UserId, s.ContactId })
+                .HasPrincipalKey(c => new { c.UserId, c.ContactId });
             modelBuilder
-                .Entity<SupplierContactSubscription>()
-                .HasIndex(s => new { s.SupplierId, s.ContactId });
+                .Entity<Contact>()
+                .HasMany(c => c.FeedbackSubscriptions)
+                .WithOne()
+                .HasForeignKey(s => new { s.UserId, s.ContactId })
+                .HasPrincipalKey(c => new { c.UserId, c.ContactId });
             modelBuilder
-                .Entity<SupplierReview>()
-                .HasKey(r => new { r.SupplierId, r.Date, r.CustomerId });
+                .Entity<Contact>()
+                .HasMany(c => c.ReportSubscriptions)
+                .WithOne()
+                .HasForeignKey(s => new { s.UserId, s.ContactId })
+                .HasPrincipalKey(c => new { c.UserId, c.ContactId });
+
             modelBuilder
-                .Entity<SupplierReview>()
-                .Property(p => p.Feedback)
+                .Entity<OrderSubscription>()
+                .HasKey(s => new { s.UserId, s.ContactId, s.CustomerId, s.OrderId });
+
+            modelBuilder
+                .Entity<FeedbackSubscription>()
+                .HasKey(s => new { s.UserId, s.ContactId });
+
+            modelBuilder
+                .Entity<ReportSubscription>()
+                .HasKey(s => new { s.UserId, s.ContactId });
+
+            modelBuilder
+                .Entity<Review>()
+                .HasIndex(r => new { r.TargetUserId, r.Date });
+
+            //modelBuilder
+            //    .Entity<Review>()
+            //    .HasIndex(r => new { r.UserId });
+
+            modelBuilder
+                .Entity<Review>()
+                .Property(r => r.Feedback)
                 .IsRequired()
                 .HasMaxLength(400);
 
@@ -183,10 +294,17 @@ namespace BakeryHub.Domain
                 .HasForeignKey(i => new { i.SupplierId, i.ProductId });
             modelBuilder
                 .Entity<Product>()
-                .HasMany(p => p.Reviews)
-                .WithOne(p => p.Product)
-                .HasForeignKey(r => new { r.CustomerId, r.ProductId })
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(p => p.ProductReviews)
+                .WithOne()
+                .HasForeignKey(r => new { r.SupplierId, r.ProductId });
+            modelBuilder
+                .Entity<ProductReview>()
+                .HasKey(r => r.ReviewId);
+            modelBuilder
+                .Entity<ProductReview>()
+                .HasOne(p => p.Review)
+                .WithOne()
+                .HasForeignKey<ProductReview>(r => r.ReviewId);
             modelBuilder
                 .Entity<ProductCategory>()
                 .Property(c => c.Name)
@@ -197,106 +315,36 @@ namespace BakeryHub.Domain
                 .Property(c => c.Description)
                 .IsRequired()
                 .HasMaxLength(400);
-            modelBuilder
-                .Entity<ProductReview>()
-                .HasKey(r => new { r.ProductId, r.Date, r.CustomerId });
-            modelBuilder
-                .Entity<ProductReview>()
-                .Property(r => r.Feedback)
-                .IsRequired()
-                .HasMaxLength(400);
 
             modelBuilder
                 .Entity<Customer>()
                 .Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(255);
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.CartItems)
-                .WithOne()
-                .HasForeignKey(i => i.CustomerId);
-
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.SupplierReviews)
-                .WithOne(r => r.Customer)
-                .HasForeignKey(r => r.CustomerId)
-                .HasPrincipalKey(c => c.Id)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.ProductReviews)
-                .WithOne()
-                .HasForeignKey(r => r.CustomerId);
 
             modelBuilder
                 .Entity<Customer>()
                 .HasMany(c => c.Orders)
-                .WithOne(c => c.Customer);
-
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.Payments)
-                .WithOne(c => c.Customer);
-
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.Addresses)
-                .WithOne()
-                .HasForeignKey(a => a.CustomerId);
-
-            modelBuilder
-                .Entity<Customer>()
-                .HasMany(c => c.Contacts)
-                .WithOne()
-                .HasForeignKey(a => a.CustomerId);
-
-            modelBuilder
-                .Entity<CustomerContact>()
-                .HasKey(c => new { c.CustomerId, c.ContactId });
-
-            modelBuilder
-                .Entity<CustomerContact>()
-                .HasMany(c => c.Subscriptions)
-                .WithOne()
-                .HasForeignKey(s => new { s.CustomerId, s.ContactId });
-
-            modelBuilder
-                .Entity<CustomerAddress>()
-                .HasKey(a => new { a.CustomerId, a.AddressId });
-
-            modelBuilder
-                .Entity<CustomerAddress>()
-                .HasOne(a => a.State)
-                .WithOne()
-                .HasForeignKey<CustomerAddress>(a => a.StateId);
-
-            modelBuilder
-                .Entity<CustomerAddress>(e =>
-                {
-                    e.Property(a => a.City)
-                        .IsRequired(true)
-                        .HasMaxLength(100);
-                    e.Property(a => a.Street)
-                        .IsRequired(true)
-                        .HasMaxLength(400);
-                    e.Property(a => a.Zip)
-                        .HasMaxLength(30);
-                });
+                .WithOne(c => c.Customer)
+                .HasForeignKey(o => o.CustomerId);
 
             modelBuilder
                 .Entity<CartItem>()
-                .HasKey(i => new { i.CustomerId, i.ItemId });
+                .HasKey(i => new { i.SessionId, i.ItemId });
 
             modelBuilder
                 .Entity<CartItem>()
                 .HasOne(c => c.Product)
                 .WithMany()
                 .HasForeignKey(i => new { i.SupplierId, i.ProductId })
-                .HasPrincipalKey(c => new { c.SupplierId, c.ProductId })
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasPrincipalKey(c => new { c.SupplierId, c.ProductId });
+
+            modelBuilder
+                .Entity<Session>()
+                .HasMany(s => s.CartItems)
+                .WithOne()
+                .HasForeignKey(c => c.SessionId)
+                .HasPrincipalKey(s => s.Id);
 
             modelBuilder
                 .Entity<Order>()
@@ -313,36 +361,6 @@ namespace BakeryHub.Domain
                 .HasKey(oi => new { oi.CustomerId, oi.OrderId, oi.ProductId });
 
             modelBuilder
-                .Entity<Delivery>()
-                .HasKey(d => new { d.OrderId, d.SupplierId, d.CustomerId });
-
-            modelBuilder
-                .Entity<Delivery>()
-                .HasOne(d => d.Order)
-                .WithMany()
-                .HasForeignKey(d => new { d.CustomerId, d.OrderId })
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder
-                .Entity<Delivery>()
-                .HasOne(d => d.Supplier)
-                .WithMany()
-                .HasForeignKey(d => d.SupplierId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder
-                .Entity<Delivery>()
-                .HasOne(d => d.Customer)
-                .WithMany()
-                .HasForeignKey(d => d.CustomerId);
-
-            modelBuilder
-                .Entity<Delivery>()
-                .HasOne(d => d.DeliverySite)
-                .WithMany()
-                .HasForeignKey(d => d.DeliverySiteId);
-
-            modelBuilder
                 .Entity<DeliverySite>()
                 .Property(d => d.Name)
                 .IsRequired(true)
@@ -355,8 +373,72 @@ namespace BakeryHub.Domain
                 .HasMaxLength(400);
 
             modelBuilder
+                .Entity<DeliverySite>()
+                .HasMany(d => d.Deliveries)
+                .WithOne()
+                .HasForeignKey(d => d.DeliverySiteId);
+
+            modelBuilder
+                .Entity<Delivery>()
+                .HasKey(d => new { d.CustomerId, d.OrderId });
+
+            modelBuilder
+                .Entity<Delivery>()
+                .HasIndex(d => new { d.DeliverySiteId });
+
+            modelBuilder
+                .Entity<Delivery>()
+                .HasOne(d => d.Order)
+                .WithOne()
+                .HasForeignKey<Delivery>(d => new { d.CustomerId, d.OrderId });
+
+            modelBuilder
+                .Entity<Delivery>()
+                .HasOne(d => d.CustomerAddress)
+                .WithMany()
+                .HasForeignKey(d => new { d.CustomerId, d.CustomerAddressId });
+
+            modelBuilder
+                .Entity<Delivery>()
+                .HasOne(d => d.SupplierAddress)
+                .WithMany()
+                .HasForeignKey(d => new { d.SupplierId, d.SupplierAddressId });
+
+            modelBuilder
+                .Entity<PaymentMethod>()
+                .HasKey(pm => new { pm.UserId, pm.PaymentMethodId });
+
+            modelBuilder
+                .Entity<PaymentMethod>()
+                .HasMany(p => p.Payments)
+                .WithOne()
+                .HasForeignKey(p => new { p.UserId, p.PaymentMethodId });
+
+            modelBuilder
                 .Entity<CardPaymentMethod>()
-                .HasKey(pm => new { pm.CustomerId, pm.PaymentMethodId });
+                .HasKey(pm => new { pm.UserId, pm.PaymentMethodId });
+
+            modelBuilder
+                .Entity<CardPaymentMethod>()
+                .HasOne(c => c.PaymentMethod)
+                .WithOne()
+                .HasForeignKey<CardPaymentMethod>(c => new { c.UserId, c.PaymentMethodId });
+
+            modelBuilder
+                .Entity<CardPaymentMethod>()
+                .HasOne(c => c.BillingAddress)
+                .WithMany()
+                .HasForeignKey(c => new { c.UserId, c.BillingAddressId });
+
+            modelBuilder
+                .Entity<PayPalPaymentMethod>()
+                .HasKey(pm => new { pm.UserId, pm.PaymentMethodId });
+
+            modelBuilder
+                .Entity<PayPalPaymentMethod>()
+                .HasOne(c => c.PaymentMethod)
+                .WithOne()
+                .HasForeignKey<PayPalPaymentMethod>(c => new { c.UserId, c.PaymentMethodId });
 
             modelBuilder
                 .Entity<CardPaymentMethod>(e =>
@@ -367,32 +449,18 @@ namespace BakeryHub.Domain
                     e.Property(c => c.CardNumber)
                         .IsRequired(true)
                         .HasMaxLength(16);
-                    e.Property(a => a.City)
-                        .IsRequired(true)
-                        .HasMaxLength(100);
-                    e.Property(a => a.Street)
-                        .IsRequired(true)
-                        .HasMaxLength(400);
-                    e.Property(a => a.Zip)
-                        .HasMaxLength(30);
-                    e.Property(a => a.Country)
-                        .HasMaxLength(100);
                 });
 
             modelBuilder.Entity<Payment>()
-                .HasKey(p => new { p.CustomerId, p.PaymentId });
+                .HasKey(p => new { p.UserId, p.PaymentId });
 
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Order)
                 .WithOne()
-                .HasForeignKey<Payment>(p => new { p.CustomerId, p.OrderId })
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey<Payment>(p => new { p.CustomerId, p.OrderId });
 
-            modelBuilder.Entity<CustomerContactSubscription>()
-                .HasKey(s => new { s.CustomerId, s.ContactId, s.Purpose });
-
-            modelBuilder.Entity<SupplierContactSubscription>()
-                .HasKey(s => new { s.SupplierId, s.ContactId, s.Purpose });
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.TargetUserId);
 
             modelBuilder.Entity<ProductImage>()
                 .HasKey(i => new { i.SupplierId, i.ProductId, i.ImageId });
@@ -400,6 +468,116 @@ namespace BakeryHub.Domain
             modelBuilder.Entity<Supplier>()
                 .Property(s => s.HasLogo)
                 .HasDefaultValue(false);
+
+            modelBuilder.Entity<Handshake>()
+                .HasIndex(s => new { s.CustomerId, s.OrderId });
+
+            modelBuilder.Entity<Handshake>()
+                .HasMany(h => h.Comments)
+                .WithOne()
+                .HasForeignKey(c => c.HandshakeId);
+
+            modelBuilder.Entity<Contact>()
+                .HasMany(h => h.Sendings)
+                .WithOne()
+                .HasForeignKey(s => new { s.UserId, s.ContactId });
+
+            modelBuilder
+                .Entity<Supplier>()
+                .HasMany(c => c.Orders)
+                .WithOne(c => c.Supplier)
+                .HasForeignKey(o => o.SupplierId);
+
+            modelBuilder
+                .Entity<OrderPaymentSensitiveInfo>()
+                .HasOne(c => c.Order)
+                .WithOne()
+                .HasForeignKey<OrderPaymentSensitiveInfo>(o => new { o.CustomerId, o.OrderId });
+
+            modelBuilder
+                .Entity<OrderPaymentSensitiveInfo>()
+                .HasOne(c => c.PaymentMethod)
+                .WithMany()
+                .HasForeignKey(o => new { o.CustomerId, o.PaymentMethodId });
+
+            modelBuilder
+                .Entity<Order>()
+                .HasMany(c => c.Subscriptions)
+                .WithOne()
+                .HasForeignKey(s => new { s.CustomerId, s.OrderId });
+
+            modelBuilder
+                .Entity<HandshakeComment>()
+                .HasKey(hc => new { hc.HandshakeId, hc.ProductId });
+
+            modelBuilder
+                .Entity<NotificationLog>()
+                .HasKey(n => new { n.UserId, n.ContactId, n.MessageId });
+
+            modelBuilder
+                .Entity<OrderPaymentSensitiveInfo>()
+                .HasKey(o => new { o.CustomerId, o.OrderId });
+
+            //datetime2 precisions
+            modelBuilder
+                .Entity<CartItem>()
+                .Property(i => i.DatePlaced)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Product>()
+                .Property(i => i.LastUpdated)
+                .IsConcurrencyToken();
+
+            modelBuilder
+                .Entity<Handshake>()
+                .Property(i => i.TimeStamp)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<NotificationLog>()
+                .Property(i => i.Date)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Order>()
+                .Property(i => i.DatePlaced)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Order>()
+                .Property(i => i.LastUpdated)
+                .IsConcurrencyToken();
+
+            modelBuilder
+                .Entity<Order>()
+                .Property(i => i.PlannedDeliveryDate)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Session>()
+                .Property(i => i.FirstVisit)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Session>()
+                .Property(i => i.LastVisit)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Review>()
+                .Property(i => i.Date)
+                .HasColumnType("datetime2(0)");
+
+            modelBuilder
+                .Entity<Delivery>()
+                .Property(i => i.LastUpdated)
+                .IsConcurrencyToken();
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             base.OnModelCreating(modelBuilder);
         }

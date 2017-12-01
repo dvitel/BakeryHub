@@ -9,5 +9,6 @@ namespace BakeryHub.Models
     public class SellerDashboard
     {
         public IList<Product> Products { get; set; }
+        public IList<Order> Orders { get; set; } 
     }
 }

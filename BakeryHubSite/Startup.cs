@@ -51,8 +51,8 @@ namespace BakeryHub
             {
                 opts.AddPolicy("Seller", p => p.RequireClaim("Seller"));
             });
-            services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<ISMSService, SMSService>();
+            services.AddTransient<IEmailService, GmailEmailService>();
+            services.AddTransient<ISMSService, AmazonSNSService>();
             services.AddMvc();
         }
 

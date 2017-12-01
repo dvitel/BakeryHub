@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using BakeryHub.Services;
 
 namespace BakeryHub.Controllers
 {
@@ -25,8 +26,9 @@ namespace BakeryHub.Controllers
         BakeryHubContext db;
         IConfiguration config;
         IHostingEnvironment env;
-        public SellerController(BakeryHubContext context, IConfiguration configuration, IHostingEnvironment envi) => 
-            (db, config, env) = (context, configuration, envi);
+        IEmailService email;
+        public SellerController(BakeryHubContext context, IConfiguration configuration, IHostingEnvironment envi, IEmailService emails) => 
+            (db, config, env, email) = (context, configuration, envi, emails);
 
         [Authorize(Policy = "Seller", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Index()
@@ -101,8 +103,8 @@ namespace BakeryHub.Controllers
             for (var i = 0; i < files.Count; i++)
             {
                 var ext = Path.GetExtension(files[i].FileName);
-                var path = Path.Combine(env.WebRootPath, "products", $"{userId}_{i}{ext}");
-                var logicalPath = $"/products/{userId}_{i}{ext}";
+                var path = Path.Combine(env.WebRootPath, "products", $"{userId}_{productId}_{i}{ext}");
+                var logicalPath = $"/products/{userId}_{productId}_{i}{ext}";
                 using (var file = System.IO.File.OpenWrite(path))
                 {
                     await files[i].CopyToAsync(file);
@@ -191,7 +193,7 @@ namespace BakeryHub.Controllers
                 States = await (from s in db.States select s).ToListAsync(),
                 Contacts = new List<SellerContact>
                 {
-                    new SellerContact { Type = ContactType.Email.ToString() }
+                    new SellerContact { Type = Contact.ContactType.Email.ToString() }
                 }
             });
         }
@@ -225,32 +227,32 @@ namespace BakeryHub.Controllers
                         Description = sellerRegistration.Description,
                         HasLogo = logoPath != "",
                         IsCompany = sellerRegistration.IsCompany,
-                        Addresses = new List<SupplierAddress>
-                        {
-                            new SupplierAddress
-                            {
-                                SupplierId = userId,
-                                AddressId = 0,
-                                City = sellerRegistration.City,
-                                StateId = sellerRegistration.StateId,
-                                isUIVisible = true,
-                                Street = sellerRegistration.Street,
-                                Zip = sellerRegistration.Zip
-                            }
-                        },
-                        Contacts =
-                            sellerRegistration.Contacts.Select((c, i) =>
-                                new SupplierContact
-                                {
-                                    SupplierId = userId,
-                                    ContactId = i,
-                                    Address = c.Address,
-                                    Name = c.Name,
-                                    IsConfirmed = false,
-                                    IsUIVisible = true,
-                                    Type = Enum.Parse<ContactType>(c.Type)
-                                }
-                            ).ToList()
+                        //Addresses = new List<SupplierAddress>
+                        //{
+                        //    new SupplierAddress
+                        //    {
+                        //        SupplierId = userId,
+                        //        AddressId = 0,
+                        //        City = sellerRegistration.City,
+                        //        StateId = sellerRegistration.StateId,
+                        //        isUIVisible = true,
+                        //        Street = sellerRegistration.Street,
+                        //        Zip = sellerRegistration.Zip
+                        //    }
+                        //},
+                        //Contacts =
+                        //    sellerRegistration.Contacts.Select((c, i) =>
+                        //        new SupplierContact
+                        //        {
+                        //            SupplierId = userId,
+                        //            ContactId = i,
+                        //            Address = c.Address,
+                        //            Name = c.Name,
+                        //            IsConfirmed = false,
+                        //            IsUIVisible = true,
+                        //            Type = Enum.Parse<ContactType>(c.Type)
+                        //        }
+                        //    ).ToList()
                     };
                 using (var tran = await db.Database.BeginTransactionAsync())
                 {

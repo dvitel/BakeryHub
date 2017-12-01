@@ -4,28 +4,44 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Scripts {
-    <style>
-        .productImg {
-            width: 300px;
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-            margin: 0 auto;
+<h2>
+    Orders<br />
+    <small>Products to be baked, packed, delivered...</small>
+</h2>
+<hr />
+<table class="table table table-striped">
+    <thead>
+        <tr>
+            <th>Due</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var now = DateTime.UtcNow; }
+        @foreach (var order in Model.Orders)
+        {
+        <tr>
+            <td>123</td>
+            <td>Some</td>
+            <td>Other</td>
+            <td>Other</td>
+            <td>Other</td>
+        </tr>
         }
-
-        .productImg img {
-            left: -50%;
-            position: absolute;
-            margin-left: -200px;
-        }
-    </style>
-}
+    </tbody>
+</table>
 
 <h2>Products<br/>
     <small>These are your products for selling...</small>
     </h2>
-<hr/>
+<hr />
+<div class="text-right sellerProductMenu">
+    <a href="/Seller/Product" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Add product...</a>
+</div>
+
 
 @if (Model.Products.Count > 0)
 {
@@ -33,14 +49,24 @@
         @foreach (var product in Model.Products)
         {
             var mainImagePath = product.Images.Count > 0 ? product.Images[0].LogicalPath : "/products/placeholder.png";
-            <div class="col-md-2">
-                <div>
-                    <div class="productImg">
-                        <img src="@mainImagePath" alt="@product.Name" />
-                    </div>
-                    <div class="productText">
-                        <span>@product.Name</span>
-                    </div>
+            <div class="col-md-3">
+                <div class="oneImgHolder">
+                    <a asp-controller="Seller" asp-action="Product" asp-route-id="@product.ProductId">
+                        <div class="sellerProductTxt">
+                            <span>@product.Name</span>
+                        </div>
+                        <div class="sellerProductImg">
+                            <img src="@mainImagePath" alt="@product.Name" />
+                            <div class="text-right" style="margin-top:.9ex">
+                                <button type="button" class="btn-sm btn btn-default" title="Hide product from customers">
+                                    <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn-sm btn btn-danger" title="Delete product">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -49,10 +75,7 @@
 } else
 {
     <div>
-        <span>You do not have any products yet.</span>
-        <div>
-            <a href="/Seller/Product" class="btn btn-primary">Register first product...</a>
-        </div>
+        <span>You do not have any products yet...</span>
     </div>
 }
 

@@ -65,3 +65,43 @@
     cursor: pointer;
     background-size: cover;
 }
+
+.sellerProductImg img {
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+    background-size: cover;
+}
+
+.sellerProductImg {
+    display: inline-block;
+}
+
+/*.oneImgHolder {
+    position:relative;
+}
+
+.sellerProductTxt {
+    position: absolute;
+    background-color: white;
+    opacity:.7;
+    color: black !important;
+    left:0;
+    top: 0;
+    width:200px;
+    text-align:center;
+}*/
+
+.sellerProductTxt {
+    color: black !important;
+    font-size: 120%;
+    margin-bottom: .5ex;    
+}
+
+.oneImgHolder > a:hover {
+    text-decoration: none;
+}
+
+.sellerProductMenu {
+    margin-bottom: 2ex;
+}
