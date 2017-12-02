@@ -15,8 +15,6 @@ namespace BakeryHub.Domain
         public DateTime TimeStamp { get; set; }
         public HanshakeTurn Turn { get; set; }
         public Order Order { get; set; }
-        public Supplier Supplier { get; set; }
-        public Customer Customer { get; set; }
         public IList<HandshakeComment> Comments { get; set; }
     }
 }

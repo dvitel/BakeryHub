@@ -98,7 +98,7 @@ namespace BakeryHub.Domain
                 .Entity<User>()
                 .Property(u => u.Password)
                 .IsRequired(true)
-                .HasMaxLength(100);
+                .HasMaxLength(200);
             modelBuilder
                 .Entity<User>()
                 .HasIndex(u => u.Login)
@@ -156,6 +156,11 @@ namespace BakeryHub.Domain
                 .HasMany(s => s.ReceivedReviews)
                 .WithOne()
                 .HasForeignKey(s => s.TargetUserId);
+            modelBuilder
+                .Entity<User>()
+                .Property(s => s.Salt)
+                .IsRequired()
+                .HasMaxLength(100);
 
             //Supplier entity
             modelBuilder
@@ -188,13 +193,15 @@ namespace BakeryHub.Domain
             modelBuilder
                 .Entity<Address>()
                 .HasOne(a => a.State)
-                .WithOne()
-                .HasForeignKey<Address>(a => a.StateId);
+                .WithMany()
+                .HasForeignKey(a => a.StateId)
+                .IsRequired(false);
             modelBuilder
                 .Entity<Address>()
                 .HasOne(a => a.Country)
-                .WithOne()
-                .HasForeignKey<Address>(a => a.CountryId);
+                .WithMany()
+                .HasForeignKey(a => a.CountryId)
+                .IsRequired();
             modelBuilder
                 .Entity<Address>(e =>
                 {
@@ -205,12 +212,18 @@ namespace BakeryHub.Domain
                         .IsRequired()
                         .HasMaxLength(400);
                     e.Property(a => a.Zip)
+                        .IsUnicode(false)
                         .HasMaxLength(30);
                 });
 
             modelBuilder
                 .Entity<Contact>()
                 .HasKey(c => new { c.UserId, c.ContactId });
+            modelBuilder
+                .Entity<Contact>()
+                .Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(100);
             modelBuilder
                 .Entity<Contact>()
                 .Property(c => c.Address)
@@ -311,7 +324,7 @@ namespace BakeryHub.Domain
                 .Entity<Customer>()
                 .Property(c => c.Name)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(100);
 
             modelBuilder
                 .Entity<Customer>()
@@ -572,16 +585,55 @@ namespace BakeryHub.Domain
                 .HasForeignKey(h => new { h.CustomerId, h.OrderId });
 
             modelBuilder
-                .Entity<Handshake>()
-                .HasOne(h => h.Customer)
-                .WithMany()
-                .HasForeignKey(h => h.CustomerId);
+                .Entity<ProductCategory>()
+                .Property(p => p.Id)
+                .ValueGeneratedNever();
 
             modelBuilder
-                .Entity<Handshake>()
-                .HasOne(h => h.Supplier)
-                .WithMany()
-                .HasForeignKey(h => h.SupplierId);
+                .Entity<HandshakeComment>()
+                .Property(c => c.Comment)
+                .IsRequired()
+                .HasMaxLength(400);
+
+            modelBuilder
+                .Entity<PaymentMethod>()
+                .Property(m => m.UIDesc)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder
+                .Entity<NotificationLog>()
+                .Property(l => l.Subject)
+                .HasMaxLength(255);
+            modelBuilder
+                .Entity<NotificationLog>()
+                .Property(l => l.Text)
+                .IsRequired();
+            modelBuilder
+                .Entity<PayPalPaymentMethod>()
+                .Property(p => p.PayPalAddress)
+                .IsRequired()
+                .HasMaxLength(255);
+            modelBuilder
+                .Entity<OrderPaymentSensitiveInfo>()
+                .Property(i => i.CVV)
+                .HasMaxLength(100).IsRequired();
+            modelBuilder
+                .Entity<OrderPaymentSensitiveInfo>()
+                .Property(i => i.ExpirationDate)
+                .HasMaxLength(100).IsRequired();
+            modelBuilder
+                .Entity<ProductImage>()
+                .Property(i => i.LogicalPath)
+                .HasMaxLength(100).IsRequired();
+            modelBuilder
+                .Entity<ProductImage>()
+                .Property(i => i.Path)
+                .HasMaxLength(255).IsRequired();
+            modelBuilder
+                .Entity<ProductImage>()
+                .Property(i => i.Mime)
+                .HasMaxLength(40).IsRequired();
 
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {

@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BakeryHubSite\BakeryHubSite.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>
