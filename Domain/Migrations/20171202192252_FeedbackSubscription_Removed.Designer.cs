@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171202192252_FeedbackSubscription_Removed")]
+    partial class FeedbackSubscription_Removed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,7 +547,7 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<int>("Type");
 
-                    b.HasKey("UserId", "ContactId", "Type");
+                    b.HasKey("UserId", "ContactId");
 
                     b.ToTable("ReportSubscription");
                 });

@@ -16,7 +16,6 @@ namespace BakeryHub.Domain
         public bool IsPrivate { get; set; }
         public bool IsDeleted { get; set; }
         public IList<OrderSubscription> OrderSubscriptions { get; set; }
-        public IList<FeedbackSubscription> FeedbackSubscriptions { get; set; }
         public IList<ReportSubscription> ReportSubscriptions { get; set; }
         public IList<NotificationLog> Sendings { get; set; }
     }

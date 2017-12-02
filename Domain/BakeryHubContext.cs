@@ -19,7 +19,6 @@ namespace BakeryHub.Domain
         public DbSet<Address> Address { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<OrderSubscription> OrderSubscription { get; set; }        
-        public DbSet<FeedbackSubscription> FeedbackSubscription { get; set; }
         public DbSet<ReportSubscription> ReportSubscription { get; set; }
         public DbSet<Delivery> Delivery { get; set; }
         public DbSet<Handshake> Handshake { get; set; }
@@ -237,12 +236,6 @@ namespace BakeryHub.Domain
                 .HasPrincipalKey(c => new { c.UserId, c.ContactId });
             modelBuilder
                 .Entity<Contact>()
-                .HasMany(c => c.FeedbackSubscriptions)
-                .WithOne()
-                .HasForeignKey(s => new { s.UserId, s.ContactId })
-                .HasPrincipalKey(c => new { c.UserId, c.ContactId });
-            modelBuilder
-                .Entity<Contact>()
                 .HasMany(c => c.ReportSubscriptions)
                 .WithOne()
                 .HasForeignKey(s => new { s.UserId, s.ContactId })
@@ -253,12 +246,8 @@ namespace BakeryHub.Domain
                 .HasKey(s => new { s.UserId, s.ContactId, s.CustomerId, s.OrderId });
 
             modelBuilder
-                .Entity<FeedbackSubscription>()
-                .HasKey(s => new { s.UserId, s.ContactId });
-
-            modelBuilder
                 .Entity<ReportSubscription>()
-                .HasKey(s => new { s.UserId, s.ContactId });
+                .HasKey(s => new { s.UserId, s.ContactId, s.Type });
 
             modelBuilder
                 .Entity<Review>()
