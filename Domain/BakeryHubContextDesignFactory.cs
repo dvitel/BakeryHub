@@ -13,7 +13,7 @@ namespace BakeryHub.Domain
         public BakeryHubContext CreateDbContext(string[] args)
         {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var configFile = String.Join(".", (new[] { "appsettings", env, "json" }).Where(s => !String.IsNullOrEmpty(s)));
+            var configFile = String.Join(".", (new[] { "appsettings", env == "Production" ? "" : env, "json" }).Where(s => !String.IsNullOrEmpty(s)));
             System.Console.WriteLine($"ENVIRONMENT: {env ?? "Production"}; {configFile}");
             var config =
                 new ConfigurationBuilder()

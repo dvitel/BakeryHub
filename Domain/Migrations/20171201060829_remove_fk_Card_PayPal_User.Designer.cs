@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171201060829_remove_fk_Card_PayPal_User")]
+    partial class remove_fk_Card_PayPal_User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -644,8 +645,7 @@ namespace BakeryHub.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Login")
-                        .IsUnique();
+                    b.HasIndex("Login");
 
                     b.HasIndex("SessionId");
 

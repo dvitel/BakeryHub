@@ -11,6 +11,7 @@ namespace BakeryHub.Domain
         public string Description { get; set; }
         public bool HasLogo { get; set; }
         public bool IsCompany { get; set; } 
+        public bool IsApproved { get; set; }
         public User User { get; set; }
         public IList<Product> Products { get; set; }        
         public IList<Order> Orders { get; set; }

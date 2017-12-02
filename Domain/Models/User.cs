@@ -22,8 +22,6 @@ namespace BakeryHub.Domain
         public IList<Payment> Payments { get; set; }
         public IList<Payment> ReceivedPayments { get; set; }
         public IList<PaymentMethod> PaymentMethods { get; set; }
-        public IList<CardPaymentMethod> CardPaymentMethod { get; set; }
-        public IList<PayPalPaymentMethod> PayPalPaymentMethod { get; set; }
         public IList<Review> Reviews { get; set; }
         public IList<Review> ReceivedReviews { get; set; }
 

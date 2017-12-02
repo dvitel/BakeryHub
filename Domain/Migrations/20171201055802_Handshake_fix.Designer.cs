@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171201055802_Handshake_fix")]
+    partial class Handshake_fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -644,8 +645,7 @@ namespace BakeryHub.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Login")
-                        .IsUnique();
+                    b.HasIndex("Login");
 
                     b.HasIndex("SessionId");
 
@@ -672,6 +672,11 @@ namespace BakeryHub.Domain.Migrations
 
             modelBuilder.Entity("BakeryHub.Domain.CardPaymentMethod", b =>
                 {
+                    b.HasOne("BakeryHub.Domain.User")
+                        .WithMany("CardPaymentMethod")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BakeryHub.Domain.Address", "BillingAddress")
                         .WithMany()
                         .HasForeignKey("UserId", "BillingAddressId")
@@ -865,6 +870,11 @@ namespace BakeryHub.Domain.Migrations
 
             modelBuilder.Entity("BakeryHub.Domain.PayPalPaymentMethod", b =>
                 {
+                    b.HasOne("BakeryHub.Domain.User")
+                        .WithMany("PayPalPaymentMethod")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BakeryHub.Domain.PaymentMethod", "PaymentMethod")
                         .WithOne()
                         .HasForeignKey("BakeryHub.Domain.PayPalPaymentMethod", "UserId", "PaymentMethodId")

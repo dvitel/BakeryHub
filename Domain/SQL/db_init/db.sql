@@ -465,3 +465,24 @@ VALUES (N'20171201052841_Schema_v1', N'2.0.0-rtm-26452');
 
 GO
 
+CREATE INDEX [IX_Handshake_SupplierId] ON [Handshake] ([SupplierId]);
+
+GO
+
+ALTER TABLE [Handshake] ADD CONSTRAINT [FK_Handshake_Customers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [Customers] ([Id]) ON DELETE NO ACTION;
+
+GO
+
+ALTER TABLE [Handshake] ADD CONSTRAINT [FK_Handshake_Suppliers_SupplierId] FOREIGN KEY ([SupplierId]) REFERENCES [Suppliers] ([Id]) ON DELETE NO ACTION;
+
+GO
+
+ALTER TABLE [Handshake] ADD CONSTRAINT [FK_Handshake_Orders_CustomerId_OrderId] FOREIGN KEY ([CustomerId], [OrderId]) REFERENCES [Orders] ([CustomerId], [OrderId]) ON DELETE NO ACTION;
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171201055802_Handshake_fix', N'2.0.0-rtm-26452');
+
+GO
+

@@ -101,7 +101,8 @@ namespace BakeryHub.Domain
                 .HasMaxLength(100);
             modelBuilder
                 .Entity<User>()
-                .HasIndex(u => u.Login);
+                .HasIndex(u => u.Login)
+                .IsUnique();
             modelBuilder
                 .Entity<User>()
                 .HasOne(u => u.Supplier)
@@ -143,16 +144,6 @@ namespace BakeryHub.Domain
             modelBuilder
                 .Entity<User>()
                 .HasMany(s => s.PaymentMethods)
-                .WithOne()
-                .HasForeignKey(c => c.UserId);
-            modelBuilder
-                .Entity<User>()
-                .HasMany(s => s.CardPaymentMethod)
-                .WithOne()
-                .HasForeignKey(c => c.UserId);
-            modelBuilder
-                .Entity<User>()
-                .HasMany(s => s.PayPalPaymentMethod)
                 .WithOne()
                 .HasForeignKey(c => c.UserId);
             modelBuilder
@@ -573,6 +564,24 @@ namespace BakeryHub.Domain
                 .Entity<Delivery>()
                 .Property(i => i.LastUpdated)
                 .IsConcurrencyToken();
+
+            modelBuilder
+                .Entity<Handshake>()
+                .HasOne(h => h.Order)
+                .WithMany()
+                .HasForeignKey(h => new { h.CustomerId, h.OrderId });
+
+            modelBuilder
+                .Entity<Handshake>()
+                .HasOne(h => h.Customer)
+                .WithMany()
+                .HasForeignKey(h => h.CustomerId);
+
+            modelBuilder
+                .Entity<Handshake>()
+                .HasOne(h => h.Supplier)
+                .WithMany()
+                .HasForeignKey(h => h.SupplierId);
 
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
