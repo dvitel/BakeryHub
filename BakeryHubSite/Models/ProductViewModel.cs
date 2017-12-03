@@ -12,7 +12,7 @@ namespace BakeryHub.Models
     {
         public IList<IFormFile> Images { get; set; } //0 is main
         public IList<string> ImagePathes { get; set; }
-        public int? ProductId { get; set; }
+        public Guid? ProductId { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }

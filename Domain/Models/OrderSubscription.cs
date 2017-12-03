@@ -6,9 +6,9 @@ namespace BakeryHub.Domain
 {
     public class OrderSubscription
     {
-        public int UserId { get; set; }
-        public int ContactId { get; set; }
-        public int CustomerId { get; set; }
-        public int OrderId { get; set; }
+        public Guid ContactId { get; set; }
+        public Guid OrderId { get; set; }
+        public Contact Contact { get; set; }
+        public Order Order { get; set; }
     }
 }

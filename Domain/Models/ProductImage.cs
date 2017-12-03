@@ -6,9 +6,8 @@ namespace BakeryHub.Domain
 {
     public class ProductImage
     {
-        public int SupplierId { get; set; }
-        public int ProductId { get; set; }
-        public int ImageId { get; set; }
+        public Guid Id { get; set; }
+        public Guid ProductId { get; set; }        
         public string Path { get; set; }
         public string LogicalPath { get; set; }
         public string Mime { get; set; }

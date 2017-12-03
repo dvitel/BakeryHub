@@ -42,13 +42,14 @@ namespace BakeryHub.Controllers
             var productImages =
                 await
                     (from i in db.ProductImages
-                     where i.SupplierId == userId
+                     join p in db.Products on i.ProductId equals p.ProductId
+                     where p.SupplierId == userId
                      select i).ToListAsync();
             var groupedImages =
-                productImages.GroupBy(i => (i.SupplierId, i.ProductId)).ToDictionary(kv => kv.Key, kv => kv.ToList());
+                productImages.GroupBy(i => i.ProductId).ToDictionary(kv => kv.Key, kv => kv.ToList());
             foreach (var product in products)
             {
-                var key = (product.SupplierId, product.ProductId);
+                var key = product.ProductId;
                 if (groupedImages.ContainsKey(key))
                 {
                     product.Images = groupedImages[key];
@@ -61,7 +62,7 @@ namespace BakeryHub.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Seller", AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Product(int? id)
+        public async Task<IActionResult> Product(Guid? id)
         {
             var userId = int.Parse(User.FindFirstValue("Id"));
             var categories =
@@ -89,7 +90,7 @@ namespace BakeryHub.Controllers
                         AvailableInStore = product.AvailableNow,
                         ImagePathes =
                             images.Select(i => i.LogicalPath).ToList(),
-                        CategoryId = product.CategoryId,
+                        CategoryId = product.ProductCategoryId,
                         Categories = categories
                     });
                 }
@@ -97,7 +98,7 @@ namespace BakeryHub.Controllers
             return View(new ProductViewModel { Categories = categories });
         }
 
-        private async Task<IList<ProductImage>> SaveImages(int userId, int productId, IList<IFormFile> files)
+        private async Task<IList<ProductImage>> SaveImages(int userId, IList<IFormFile> files, Guid? productId = null)
         {
             var productImages = new List<ProductImage>();
             for (var i = 0; i < files.Count; i++)
@@ -109,15 +110,14 @@ namespace BakeryHub.Controllers
                 {
                     await files[i].CopyToAsync(file);
                 }
-                productImages.Add(new ProductImage
+                var img = new ProductImage
                 {
-                    SupplierId = userId,
-                    ProductId = productId,
-                    ImageId = i,
                     Path = path,
                     LogicalPath = logicalPath,
-                    Mime = files[i].ContentType
-                });
+                    Mime = files[i].ContentType,
+                };
+                if (productId.HasValue) img.ProductId = productId.Value;
+                productImages.Add(img);
             }
             return productImages;
         }
@@ -143,14 +143,15 @@ namespace BakeryHub.Controllers
                     {
                         var productImages =
                             await (from p in db.ProductImages
-                                   where p.SupplierId == userId && p.ProductId == productModel.ProductId.Value
+                                   join pr in db.Products on p.ProductId equals pr.ProductId
+                                   where pr.SupplierId == userId && p.ProductId == productModel.ProductId.Value
                                    select p).ToListAsync();
                         product.Name = productModel.Name;
                         product.Description = productModel.Description;
                         product.AvailableNow = productModel.AvailableInStore;
                         product.Price = productModel.Price;
-                        product.CategoryId = productModel.CategoryId;
-                        product.Images = await SaveImages(userId, product.ProductId, productModel.Images);
+                        product.ProductCategoryId = productModel.CategoryId;
+                        product.Images = await SaveImages(userId, productModel.Images, product.ProductId);
                         db.ProductImages.RemoveRange(productImages);
                         db.Products.Update(product);
                         await db.SaveChangesAsync();
@@ -158,20 +159,17 @@ namespace BakeryHub.Controllers
                 } else
                 {
                     //insert
-                    var maxProductId =
-                        await (from p in db.Products select p.ProductId).DefaultIfEmpty(0).MaxAsync();
 
                     var product =
                         new Product
                         {
                             SupplierId = userId,
-                            ProductId = maxProductId + 1,
                             AvailableNow = productModel.AvailableInStore,
                             Name = productModel.Name,
                             Description = productModel.Description,
                             Price = productModel.Price,
-                            Images = await SaveImages(userId, maxProductId + 1, productModel.Images),
-                            CategoryId = productModel.CategoryId
+                            Images = await SaveImages(userId, productModel.Images),
+                            ProductCategoryId = productModel.CategoryId
                         };
 
                     await db.Products.AddAsync(product);
@@ -219,11 +217,12 @@ namespace BakeryHub.Controllers
                     var logoLogicalPath = Path.Combine($"logos", $"{userId}{Path.GetExtension(sellerRegistration.Logo.FileName)}");
                     logoPath = Path.Combine(env.WebRootPath, logoLogicalPath);
                 }
+                var user = await db.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+                user.Name = sellerRegistration.Name;
                 var seller =
                     new Supplier
                     {
                         Id = userId,
-                        Name = sellerRegistration.Name,
                         Description = sellerRegistration.Description,
                         HasLogo = logoPath != "",
                         IsCompany = sellerRegistration.IsCompany,
@@ -256,6 +255,7 @@ namespace BakeryHub.Controllers
                     };
                 using (var tran = await db.Database.BeginTransactionAsync())
                 {
+                    db.Users.Update(user);
                     await db.Suppliers.AddAsync(seller);
                     await db.SaveChangesAsync();
                     if (logoPath != "")

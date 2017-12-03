@@ -102,7 +102,8 @@ namespace BakeryHubSite.Controllers
                 var user =
                     await
                         (from u in 
-                            db.Users.Include(u => u.Customer)
+                            db.Users
+                                .Include(u => u.DeliverySite)
                                 .Include(u => u.Supplier)
                          where u.Login == loginForm.Login
                          select u).FirstOrDefaultAsync();
@@ -121,6 +122,8 @@ namespace BakeryHubSite.Controllers
                         };
                     if (user.Supplier != null)
                         claims.Add(new Claim("Seller",  "1"));
+                    if (user.DeliverySite != null)
+                        claims.Add(new Claim("DeliverySite", "1"));
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity),
                         new AuthenticationProperties { IsPersistent = loginForm.RememberMe });

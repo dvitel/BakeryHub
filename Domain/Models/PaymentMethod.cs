@@ -7,8 +7,8 @@ namespace BakeryHub.Domain
     public class PaymentMethod
     {
         public enum PaymentMethodType { Card, PayPal }
-        public int UserId { get; set; }
-        public int PaymentMethodId { get; set; }
+        public Guid PaymentMethodId { get; set; }
+        public int UserId { get; set; }        
         public string UIDesc { get; set; }
         public PaymentMethodType Type { get; set; }
         public bool IsDeleted { get; set; }

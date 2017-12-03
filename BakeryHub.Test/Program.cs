@@ -104,8 +104,7 @@ namespace BakeryHub.Test
                 .EnableSensitiveDataLogging();            
             var firstVisit = randDateTime(10);
             var supplier =
-                new Supplier {
-                    Name = $"European pastry in Florida",
+                new Supplier {                    
                     Description =
                         @"We are most often ordered:\r\n
 - The Honey cake;\r\n
@@ -125,19 +124,17 @@ namespace BakeryHub.Test
                         {
                             new Product
                             {
-                                ProductId = 1,
                                 Name = $"Honey cake with customized decoration",
                                 Description = "Fondant decoration",
                                 Price = 35,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     new List<ProductImage>
                                     {
                                         new ProductImage
                                         {
-                                            ImageId = 0,
                                             LogicalPath = "/products/1_1_0.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -146,18 +143,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 2,
                                 Name = $"Honey cake",
                                 Description = "Made of honey",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(5, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_2_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -165,18 +160,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 3,
                                 Name = $"Two level honey cake",
                                 Description = "Base level is x2 size, weight 7lb",
                                 Price = 62,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_3_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -184,18 +177,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 4,
                                 Name = $"Strawberry decorated honey cake",
                                 Description = "Base size x1 is 3.5lb",
                                 Price = 31,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(6, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_4_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -203,18 +194,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 5,
                                 Name = $"x2 Honey cake",
                                 Description = "7lb, no decore",
                                 Price = 56,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_5_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -222,18 +211,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 6,
                                 Name = $"2 level honey cake",
                                 Description = "7lb, no decore",
                                 Price = 62,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_6_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -241,18 +228,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 7,
                                 Name = $"Honey cake for baby shower",
                                 Description = "x1 (3.5lb) + decore",
                                 Price = 33,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_7_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -260,18 +245,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 8,
                                 Name = $"Wedding loaf",
                                 Description = "Carawai, Russion traditional",
                                 Price = 30,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 2,
+                                ProductCategoryId = 2,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_8_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -279,18 +262,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 9,
                                 Name = $"Bird milk cake",
                                 Description = "Suffle cake",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(3, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_9_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -298,18 +279,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 10,
                                 Name = $"Honey cake with flower decorated fondant",
                                 Description = "Suffle cake",
                                 Price = 31,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_10_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -317,18 +296,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 11,
                                 Name = $"Fish pie",
                                 Description = "Coulibiaka, Russion traditional",
                                 Price = 35,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 2,
+                                ProductCategoryId = 2,
                                 Images =
                                     genN(3, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_11_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -336,18 +313,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 12,
                                 Name = $"Pirogi with apples",
                                 Description = "Russion traditional, x12 in pack",
                                 Price = 20,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_12_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -355,18 +330,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 13,
                                 Name = $"Pirogi with cabbage",
                                 Description = "Russion traditional, x12 in pack",
                                 Price = 20,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 3,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(3, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_13_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -374,18 +347,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 14,
                                 Name = $"Chocolate cake",
                                 Description = "3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_14_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -393,18 +364,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 15,
                                 Name = $"Honey cake again",
                                 Description = "3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_15_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -412,18 +381,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 16,
                                 Name = $"Honey cake under simple fondant decoration",
                                 Description = "3.5lb",
                                 Price = 31,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_16_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -431,18 +398,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 17,
                                 Name = $"Prague cake",
                                 Description = "3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_17_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -450,18 +415,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 18,
                                 Name = $"Honey cake under customized decoration",
                                 Description = "3.5lb",
                                 Price = 31,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_18_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -469,18 +432,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 19,
                                 Name = $"Wafle cake under nuts",
                                 Description = "3.5lb",
                                 Price = 25,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_19_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -488,18 +449,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 20,
                                 Name = $"Honey cake wiht bee cells",
                                 Description = "3.5lb",
                                 Price = 29,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_20_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -507,18 +466,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 21,
                                 Name = $"Chocolate cake",
                                 Description = "3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_21_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -526,18 +483,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 22,
                                 Name = $"Cookies",
                                 Description = "x10 per pack",
                                 Price = 20,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 2,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_22_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -545,18 +500,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 23,
                                 Name = $"Small honey cake",
                                 Description = "x0.5, 1.8lb, available only with ordering other cakes",
                                 Price = 14,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_23_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -564,18 +517,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 24,
                                 Name = $"Fish pie, 0.5",
                                 Description = "Rusian traditional",
                                 Price = 15,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 2,
+                                ProductCategoryId = 2,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_24_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -583,18 +534,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 25,
                                 Name = $"Poppy seeds cookies",
                                 Description = "Rusian traditional, x8 per pack",
                                 Price = 15,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 1,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_25_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -602,18 +551,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 26,
                                 Name = $"Chicken pie",
                                 Description = "Kurnick, Rusian traditional",
                                 Price = 30,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 2,
+                                ProductCategoryId = 2,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_26_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -621,18 +568,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 27,
                                 Name = $"Honey cake, business style",
                                 Description = "Fondant decoration",
                                 Price = 33,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_27_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -640,18 +585,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 28,
                                 Name = $"Honey cake, bee hive, x0.5",
                                 Description = "Available only for ordering with other cakes",
                                 Price = 24,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_28_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -659,18 +602,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 29,
                                 Name = $"Honey cake with cocoa fondant",
                                 Description = "3.5lb",
                                 Price = 31,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_29_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -678,18 +619,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 30,
                                 Name = $"Honey cake, cow farm",
                                 Description = "3.5lb",
                                 Price = 33,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_30_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -697,18 +636,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 31,
                                 Name = $"Honey volcano",
                                 Description = "3 levels, x3, 10lb",
                                 Price = 89,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_31_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -716,18 +653,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 32,
                                 Name = $"Honey cake, business style, 2 levels",
                                 Description = "x2, 7lb",
                                 Price = 64,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_32_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -735,18 +670,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 33,
                                 Name = $"Spartak cake under chocolate decore",
                                 Description = "x1, 3.5lb",
                                 Price = 35,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_33_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -754,18 +687,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 34,
                                 Name = $"Potato cookies",
                                 Description = "x12 per pack",
                                 Price = 18,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_34_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -773,18 +704,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 35,
                                 Name = $"Spartak cake with messages",
                                 Description = "x1, 3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_35_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -792,18 +721,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 36,
                                 Name = $"Chocolate cherry cake with decore",
                                 Description = "x1, 3.5lb",
                                 Price = 28,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_36_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -811,18 +738,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 37,
                                 Name = $"Honey cake with business decoration, 2 levels",
                                 Description = "x1.5, 5.5lb",
                                 Price = 45,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_37_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -830,18 +755,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 38,
                                 Name = $"Honey cake, 3 levels",
                                 Description = "x3, 10lb",
                                 Price = 83,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(2, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_38_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -849,18 +772,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 39,
                                 Name = $"Fruit cake",
                                 Description = "2lb",
                                 Price = 23,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 0,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_39_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -868,18 +789,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 40,
                                 Name = $"Pipes (horns) with cream",
                                 Description = "x12 per pack",
                                 Price = 20,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 1,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_40_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -887,18 +806,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 41,
                                 Name = $"Pufs with cream",
                                 Description = "x12 per pack",
                                 Price = 24,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 3,
-                                CategoryId = 3,
+                                ProductCategoryId = 3,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_41_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -906,18 +823,16 @@ namespace BakeryHub.Test
                             },
                             new Product
                             {
-                                ProductId = 42,
                                 Name = $"Milk cream pie",
                                 Description = "2lb",
                                 Price = 27,
                                 LastUpdated = DateTime.UtcNow,
                                 AvailableNow = 3,
-                                CategoryId = 1,
+                                ProductCategoryId = 1,
                                 Images =
                                     genN(1, i =>
                                         new ProductImage
                                         {
-                                            ImageId = i,
                                             LogicalPath = $"/products/1_42_{i}.jpg",
                                             Path = "",
                                             Mime = "image/jpg",
@@ -927,6 +842,7 @@ namespace BakeryHub.Test
                     User = 
                         new User
                         {
+                            Name = $"European pastry in Florida",
                             Login = config["cred:login"],
                             Password = config["cred:pwd"],
                             PasswordEncryptionAlgorithm = User.PasswordEncryption.Plain,
@@ -952,7 +868,6 @@ namespace BakeryHub.Test
                                 new List<Address> {
                                     new Address
                                     {
-                                        AddressId = 1,
                                         City = "Sait Petersburg",
                                         CountryId = "US",
                                         StateId = "FL",
@@ -967,51 +882,28 @@ namespace BakeryHub.Test
                                 {
                                     new Contact
                                     {
-                                        ContactId = 1,
                                         Type = Contact.ContactType.Email,
                                         Address = config["dev_contact_email"],
                                         IsConfirmed = true,
                                         IsDeleted = false,
                                         IsPrivate = true,
                                         Name = $"Developer 1",
-                                        ReportSubscriptions =
-                                            new List<ReportSubscription>()
-                                            {
-                                                new ReportSubscription
-                                                {
-                                                    Type = ReportSubscription.ReportType.OrderAvailable                                                    
-                                                },
-                                                new ReportSubscription
-                                                {
-                                                    Type = ReportSubscription.ReportType.MonthlySales
-                                                },
-                                                new ReportSubscription
-                                                {
-                                                    Type = ReportSubscription.ReportType.Feedback
-                                                }
-                                            }
+                                        monthlySalesReport = true,
+                                        notifyAboutNewOrder = true,
+                                        notifyAboutFeedback = true
                                     },
                                     new Contact
                                     {
-                                        ContactId = 2,
                                         Type = Contact.ContactType.Mobile,
                                         Address = config["dev_contact_sms"],
                                         IsConfirmed = true,
                                         IsDeleted = false,
                                         IsPrivate = true,
                                         Name = $"Developer 1",
-                                        ReportSubscriptions =
-                                            new List<ReportSubscription>()
-                                            {
-                                                new ReportSubscription
-                                                {
-                                                    Type = ReportSubscription.ReportType.OrderAvailable
-                                                }
-                                            }
+                                        notifyAboutNewOrder = true
                                     },
                                     new Contact
                                     {
-                                        ContactId = 3,
                                         Type = Contact.ContactType.Phone,
                                         Address = config["supplier_phone"],
                                         IsConfirmed = true,
@@ -1037,103 +929,100 @@ namespace BakeryHub.Test
             var firstVisit = randDateTime(10);
             using (var context = new BakeryHubContext(optionsBuilder.Options))
             {
-                var supplier = await (from s in context.Suppliers where s.Name == "European pastry in Florida" select s).FirstOrDefaultAsync();
+                var supplier = await (from s in context.Suppliers.Include(s => s.Products) join u in context.Users on s.Id equals u.Id where u.Name == "European pastry in Florida" select s).FirstOrDefaultAsync();
                 var customers =
                 names.Select((name, i) =>
-                    new Customer
+                    new User
                     {
                         Name = name,
-                        User =
-                            new User
-                            {
-                                Login = $"login_{i}",
-                                Password = $"pwd_{i}",
-                                PasswordEncryptionAlgorithm = User.PasswordEncryption.Plain,
-                                Salt = "",
-                                Session = new Session
+                        Login = $"login_{i}",
+                        Password = $"pwd_{i}",
+                        PasswordEncryptionAlgorithm = User.PasswordEncryption.Plain,
+                        Salt = "",
+                        Session = new Session
+                        {
+                            IP = $"127.0.0.{randInt(1, 253)}",
+                            FirstVisit = firstVisit,
+                            LastVisit = randDateTime(firstVisit),
+                            UserAgent =
+                                randSet(
+                                    new[] {
+                                        "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
+                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+                                        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+                                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 OPR/38.0.2220.41",
+                                        "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1",
+                                        "Googlebot/2.1 (+http://www.google.com/bot.html)",
+                                        "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)"
+                                    }),
+                        },
+                        Addresses =
+                            randN(3, j =>
+                                new Address
                                 {
-                                    IP = $"127.0.0.{randInt(1, 253)}",
-                                    FirstVisit = firstVisit,
-                                    LastVisit = randDateTime(firstVisit),
-                                    UserAgent =
-                                        randSet(
-                                            new[] {
-                                                "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
-                                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
-                                                "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
-                                                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 OPR/38.0.2220.41",
-                                                "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1",
-                                                "Googlebot/2.1 (+http://www.google.com/bot.html)",
-                                                "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)"
-                                            }),
-                                },
-                                Addresses =
-                                    randN(3, j =>
-                                        new Address
+                                    City =
+                                        randSet(new[]
                                         {
-                                            AddressId = j,
-                                            City =
-                                                randSet(new[]
-                                                {
-                                                    "Sait Petersburg",
-                                                    "Clearwater",
-                                                    "Tampa",
-                                                    "Seminole"
-                                                }),
-                                            CountryId = "US",
-                                            StateId = "FL",
-                                            IsBilling = randBool(0.9),
-                                            IsDeleted = randBool(0.9),
-                                            Street = "Street ?",
-                                            Zip = ""
-                                        }, 1).ToList(),
-                                Contacts =
-                                    randN(3, j => {
-                                        var contactType =
-                                            randSet(new[]
-                                            {
-                                                 Contact.ContactType.Email,
-                                                 Contact.ContactType.Mobile,
-                                                 Contact.ContactType.Phone
-                                            });
-                                        return
-                                            new Contact
-                                            {
-                                                ContactId = j,
-                                                Type = contactType,
-                                                Address =
-                                                    contactType == Contact.ContactType.Email ?
-                                                        $"email_{name}@domain{i}.com" :
-                                                        $"+{i}0123456789"
-                                                    ,
-                                                IsConfirmed = true,
-                                                IsDeleted = false,
-                                                IsPrivate = true,
-                                                Name = name
-                                            };
-                                    }, 1).ToList(),
-                            },
+                                            "Sait Petersburg",
+                                            "Clearwater",
+                                            "Tampa",
+                                            "Seminole"
+                                        }),
+                                    CountryId = "US",
+                                    StateId = "FL",
+                                    IsBilling = randBool(0.9),
+                                    IsDeleted = randBool(0.9),
+                                    Street = "Street ?",
+                                    Zip = ""
+                                }, 1).ToList(),
+                        Contacts =
+                            randN(3, j => {
+                                var contactType =
+                                    randSet(new[]
+                                    {
+                                            Contact.ContactType.Email,
+                                            Contact.ContactType.Mobile,
+                                            Contact.ContactType.Phone
+                                    });
+                                return
+                                    new Contact
+                                    {
+                                        Type = contactType,
+                                        Address =
+                                            contactType == Contact.ContactType.Email ?
+                                                $"email_{name}@domain{i}.com" :
+                                                $"+{i}0123456789"
+                                            ,
+                                        IsConfirmed = true,
+                                        IsDeleted = false,
+                                        IsPrivate = true,
+                                        Name = name
+                                    };
+                            }, 1).ToList(),
                         Orders =
                             randN(6, j => {
                                 var placed = randDateTime(100);
                                 var plannedDelivery = placed.AddDays(randInt(4, 10));
                                 return new Order {
-                                    OrderId = j,
                                     SupplierId = supplier.Id,
                                     DatePlaced = randDateTime(100),
                                     LastUpdated = DateTime.UtcNow,
                                     PlannedDeliveryDate = plannedDelivery,
                                     Status =
                                         randSet((IEnumerable<Order.OrderStatus>)Enum.GetValues(typeof(Order.OrderStatus))),
-                                    Price = (decimal)(100 * rand.NextDouble() + 5),
+                                    Price = 0,
                                     OrderItems = 
-                                        randN(5, k => new OrderItem
-                                        {
-                                            IsCanceled = randBool(0.9),
-                                            ProductId = randInt(1,42),
-                                            ProductCount = 
-                                                randBool(0.8) ? randInt(1,3) : 1,
-                                            TotalPrice = (decimal)(100 * rand.NextDouble() + 5),
+                                        randN(5, k => {
+                                            var product = randSet(supplier.Products);
+                                            var count = randBool(0.8) ? randInt(1, 3) : 1;
+                                            return
+                                                new OrderItem
+                                                {
+                                                    IsCanceled = randBool(0.9),
+                                                    ProductId = product.ProductId,
+                                                    ProductCount = count,
+                                                    TotalPrice = count * product.Price,
+                                                };
                                         }, 0, 1).ToList(),                                    
                                 };
                             }, 1, 1).ToList()
@@ -1146,7 +1035,7 @@ namespace BakeryHub.Test
                     customer.Orders =
                         customer.Orders.Select(order =>
                             {
-                                HashSet<int> productIds = new HashSet<int>();
+                                HashSet<Guid> productIds = new HashSet<Guid>();
                                 order.OrderItems = 
                                     order.OrderItems.Where(item =>
                                     {
@@ -1154,38 +1043,13 @@ namespace BakeryHub.Test
                                         productIds.Add(item.ProductId);
                                         return res;
                                     }).ToList();
+                                order.Price = order.OrderItems.Sum(i => i.TotalPrice);
                                 return order;
                             }
                         ).ToList();
                     return customer;
                 });
-                await context.Customers.AddRangeAsync(customers);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        public static async Task FixOrderPrices(IConfiguration config, string env)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<BakeryHubContext>();
-            optionsBuilder.UseSqlServer(config[$"ConnectionString:{env}"])
-                .EnableSensitiveDataLogging();
-            using (var context = new BakeryHubContext(optionsBuilder.Options))
-            {
-                var orders = await (from order in context.Orders.Include(o => o.OrderItems) select order).ToListAsync();
-                var products = await (from product in context.Products select product).ToDictionaryAsync(p => p.ProductId);
-                orders =
-                    orders.Select(order =>
-                    {
-                        order.OrderItems =
-                            order.OrderItems.Select(item =>
-                            {
-                                item.TotalPrice = item.ProductCount * products[item.ProductId].Price;
-                                return item;
-                            }).ToList();
-                        order.Price = order.OrderItems.Sum(item => item.TotalPrice);
-                        return order;
-                    }).ToList();
-                context.Orders.UpdateRange(orders);
+                await context.Users.AddRangeAsync(customers);
                 await context.SaveChangesAsync();
             }
         }
@@ -1199,21 +1063,20 @@ namespace BakeryHub.Test
             {
                 var sessionIds = 
                     await (
-                        from c in context.Customers
-                        join u in context.Users on c.Id equals u.Id
+                        from u in context.Users
                         join s in context.Session on u.SessionId equals s.Id
                         select s.Id).ToListAsync();
                 var products =
                     (await (from product in context.Products select new { product.SupplierId, product.ProductId }).ToListAsync())
-                    .Select(p => new Tuple<int, int>(p.SupplierId, p.ProductId)).ToHashSet();
+                    .Select(p => p.ProductId).ToHashSet();
                 var carts =
                     sessionIds.SelectMany(sessionId =>
                         {
-                            var selected = new HashSet<Tuple<int, int>>();
+                            var selected = new HashSet<Guid>();
                             return
                                 randN(3, i =>
                                     {
-                                        var product = Tuple.Create(0, 0);
+                                        var product = Guid.Empty;
                                         do
                                         {
                                             product = randSet(products);
@@ -1226,12 +1089,10 @@ namespace BakeryHub.Test
                                         return
                                             new CartItem
                                             {
-                                                ItemId = i,
                                                 DatePlaced = randDateTime(10),
-                                                ProductId = product.Item2,
+                                                ProductId = product,
                                                 SessionId = sessionId,
-                                                SupplierId = product.Item1,
-                                                ProductCount = 1
+                                                ProductCount = 1,
                                             };
                                     });
                         }
@@ -1248,21 +1109,21 @@ namespace BakeryHub.Test
                 .EnableSensitiveDataLogging();
             using (var context = new BakeryHubContext(optionsBuilder.Options))
             {
-                var customers =
-                    await
-                        context.Customers.ToListAsync();
                 var suppliers =
                     await
                         context.Suppliers.Include(s => s.Products).ToListAsync();
+                var supplierIds = suppliers.Select(s => s.Id).ToHashSet();
+                var customers =
+                    await
+                        context.Users.Where(u => !supplierIds.Contains(u.Id)).ToListAsync();
                 var productReviews = 
-                    genN(10000, i =>
+                    genN(1000, i =>
                     {
                         var customer = randSet(customers);
                         var supplier = randSet(suppliers);
                         var product = randSet(supplier.Products);
                         return new ProductReview
                         {
-                            SupplierId = product.SupplierId,
                             ProductId = product.ProductId,
                             Review = new Review
                             {
@@ -1308,7 +1169,7 @@ namespace BakeryHub.Test
                                 new NotificationLog
                                 {
                                     ContactId = contact.ContactId,
-                                    Date = randDateTime(1, DateTime.UtcNow.AddDays(2)),
+                                    Date = randDateTime(13), //randDateTime(1, DateTime.UtcNow.AddDays(2)),
                                     Status = status,
                                     ErrorMessage =
                                         status == NotificationLog.NotificationDelivery.Delivered ? null
@@ -1321,7 +1182,6 @@ namespace BakeryHub.Test
                                             }),
                                     Text = "You order has been delivered",
                                     Subject = "Order status changed",
-                                    UserId = contact.UserId
                                     //MessageId
                                 };
                         }
@@ -1349,10 +1209,7 @@ namespace BakeryHub.Test
                         return
                             new Handshake
                             {
-                                CustomerId = order.CustomerId,
                                 OrderId = order.OrderId,
-                                SeqNum = randInt(0, 100),
-                                SupplierId = order.SupplierId,
                                 TimeStamp = randDateTime(10),
                                 Turn = randSet(new []
                                 {
@@ -1391,11 +1248,11 @@ namespace BakeryHub.Test
             using (var context = new BakeryHubContext(optionsBuilder.Options))
             {
                 var customers =
-                    await (from c in context.Customers.Include(o => o.User) select c).ToListAsync();
+                    await (from c in context.Users select c).ToListAsync();
 
                 var pmd = new Dictionary<int, int>();
                 var cardPaymentMethods =
-                    genN(1000, i =>
+                    genN(100, i =>
                     {
                         var customer = randSet(customers);
                         var nextId =
@@ -1406,12 +1263,9 @@ namespace BakeryHub.Test
                             {
                                 NameOnCard = customer.Name,
                                 CardNumber = "1234567812345678",
-                                UserId = customer.Id,
-                                PaymentMethodId = nextId,
                                 PaymentMethod = new PaymentMethod
                                 {
                                     IsDeleted = false,
-                                    PaymentMethodId = nextId,
                                     UserId = customer.Id,
                                     Type = PaymentMethod.PaymentMethodType.Card,
                                     UIDesc = "1234 5678 1234 5678",                                    
@@ -1419,8 +1273,7 @@ namespace BakeryHub.Test
                                 BillingAddress =
                                     new Address
                                     {
-                                        UserId = customer.Id,                                        
-                                        AddressId = 100 + nextId,
+                                        UserId = customer.Id,
                                         City = "Sait Petersburg",
                                         CountryId = "US",
                                         StateId = "FL",
@@ -1445,17 +1298,16 @@ namespace BakeryHub.Test
                     sqlParameter.TypeName = "dbo.IntId";
                     var orders =
                         (await
-                        context.Orders.FromSql("SELECT * FROM Orders WHERE CustomerId IN (SELECT id FROM @ids)", sqlParameter).ToListAsync())
-                        .GroupBy(o => o.CustomerId).ToDictionary(g => g.Key, g => g.ToList());
+                        context.Orders.FromSql("SELECT * FROM Orders WHERE UserId IN (SELECT id FROM @ids)", sqlParameter).ToListAsync())
+                        .GroupBy(o => o.UserId).ToDictionary(g => g.Key, g => g.ToList());
                     var sensitive =
-                        cardPaymentMethods.Where(p => randBool(0.5) && orders.ContainsKey(p.UserId)).Select(p => new OrderPaymentSensitiveInfo
+                        cardPaymentMethods.Where(p => randBool(0.5) && orders.ContainsKey(p.PaymentMethod.UserId)).Select(p => new OrderPaymentSensitiveInfo
                         {
-                            CustomerId = p.UserId,
                             CVV = "123",
                             ExpirationDate = randDateTime(DateTime.UtcNow.AddYears(1), DateTime.UtcNow.AddYears(2)).ToString(),
-                            OrderId = randSet(orders[p.UserId]).OrderId,
-                            PaymentMethod = p.PaymentMethod
-                        }).GroupBy(s => new { s.CustomerId, s.OrderId }).Select(g => g.First());
+                            OrderId = randSet(orders[p.PaymentMethod.UserId]).OrderId,
+                            CardPaymentMethod = p
+                        }).GroupBy(s => s.OrderId).Select(g => g.First());
                     await context.CardPaymentMethods.AddRangeAsync(cardPaymentMethods);
                     await context.OrderPaymentSensitiveInfo.AddRangeAsync(sensitive);
                     await context.SaveChangesAsync();
@@ -1470,9 +1322,9 @@ namespace BakeryHub.Test
                 var builder = new ConfigurationBuilder();
                 builder.AddJsonFile("appsettings.json");
                 var config = builder.Build();
-                var env = "Development";
-                //await TestSMS(config);
-                //await TestEmail(config);
+                var env = "Production";
+                ////await TestSMS(config);
+                ////await TestEmail(config);
 
                 //await CreateSupplier(config, env);
                 //await CreateCustomers(config,
@@ -1484,14 +1336,18 @@ namespace BakeryHub.Test
                 //        "Sonya",
                 //        "Dmitry",
                 //        "Alisha",
-                //        "Dhruv"
+                //        "Dhruv",
+                //        "Dave",
+                //        "Angelika",
+                //        "John",
+                //        "Steve",
+                //        "No name",
+                //        "Some other user"
                 //    }, env);
-
-                //await FixOrderPrices(config, env);
 
                 //await CreateCartItems(config, env);
                 //await CreateReviews(config, env);
-                //await GenerateNotificationLogs(config, env);
+                await GenerateNotificationLogs(config, env);
                 await GeneratePaymentMethods(config, env);
                 System.Console.WriteLine("Done!"); 
             }

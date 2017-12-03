@@ -11,8 +11,8 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    [Migration("20171202224407_NotificationLogKey")]
-    partial class NotificationLogKey
+    [Migration("20171203163433_Init_Data")]
+    partial class Init_Data
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,9 +23,8 @@ namespace BakeryHub.Domain.Migrations
 
             modelBuilder.Entity("BakeryHub.Domain.Address", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("AddressId");
+                    b.Property<Guid>("AddressId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -46,26 +45,28 @@ namespace BakeryHub.Domain.Migrations
                         .IsRequired()
                         .HasMaxLength(400);
 
+                    b.Property<int>("UserId");
+
                     b.Property<string>("Zip")
                         .HasMaxLength(30)
                         .IsUnicode(false);
 
-                    b.HasKey("UserId", "AddressId");
+                    b.HasKey("AddressId");
 
                     b.HasIndex("CountryId");
 
                     b.HasIndex("StateId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Address");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.CardPaymentMethod", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<Guid>("PaymentMethodId");
 
-                    b.Property<int>("PaymentMethodId");
-
-                    b.Property<int>("BillingAddressId");
+                    b.Property<Guid>("BillingAddressId");
 
                     b.Property<string>("CardNumber")
                         .IsRequired()
@@ -75,40 +76,40 @@ namespace BakeryHub.Domain.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
-                    b.HasKey("UserId", "PaymentMethodId");
+                    b.HasKey("PaymentMethodId");
 
-                    b.HasIndex("UserId", "BillingAddressId");
+                    b.HasIndex("BillingAddressId");
 
                     b.ToTable("CardPaymentMethods");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.CartItem", b =>
                 {
-                    b.Property<Guid>("SessionId");
-
-                    b.Property<int>("ItemId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DatePlaced")
                         .HasColumnType("datetime2(0)");
 
                     b.Property<int>("ProductCount");
 
-                    b.Property<int>("ProductId");
+                    b.Property<Guid>("ProductId");
 
-                    b.Property<int>("SupplierId");
+                    b.Property<Guid>("SessionId");
 
-                    b.HasKey("SessionId", "ItemId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("SupplierId", "ProductId");
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SessionId");
 
                     b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Contact", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("ContactId");
+                    b.Property<Guid>("ContactId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -126,7 +127,19 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<int>("Type");
 
-                    b.HasKey("UserId", "ContactId");
+                    b.Property<int>("UserId");
+
+                    b.Property<bool>("monthlyDeliveriesReport");
+
+                    b.Property<bool>("monthlySalesReport");
+
+                    b.Property<bool>("notifyAboutFeedback");
+
+                    b.Property<bool>("notifyAboutNewOrder");
+
+                    b.HasKey("ContactId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Contacts");
                 });
@@ -165,47 +178,35 @@ namespace BakeryHub.Domain.Migrations
                     b.ToTable("States");
                 });
 
-            modelBuilder.Entity("BakeryHub.Domain.Customer", b =>
-                {
-                    b.Property<int>("Id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
-                });
-
             modelBuilder.Entity("BakeryHub.Domain.Delivery", b =>
                 {
-                    b.Property<int>("CustomerId");
+                    b.Property<Guid>("DeliveryId")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("CustomerAddressId");
+                    b.Property<Guid>("CustomerAddressId");
 
                     b.Property<int>("DeliverySiteId");
 
                     b.Property<DateTime>("LastUpdated")
                         .IsConcurrencyToken();
 
+                    b.Property<Guid>("OrderId");
+
                     b.Property<decimal?>("Price");
 
                     b.Property<int>("Status");
 
-                    b.Property<int>("SupplierAddressId");
+                    b.Property<Guid>("SupplierAddressId");
 
-                    b.Property<int>("SupplierId");
+                    b.HasKey("DeliveryId");
 
-                    b.HasKey("CustomerId", "OrderId");
+                    b.HasIndex("CustomerAddressId");
 
                     b.HasIndex("DeliverySiteId");
 
-                    b.HasIndex("CustomerId", "CustomerAddressId");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("SupplierId", "SupplierAddressId");
+                    b.HasIndex("SupplierAddressId");
 
                     b.ToTable("Delivery");
                 });
@@ -217,10 +218,6 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(400);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100);
 
                     b.Property<bool>("isCompany");
 
@@ -234,13 +231,7 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CustomerId");
-
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("SeqNum");
-
-                    b.Property<int>("SupplierId");
+                    b.Property<Guid>("OrderId");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2(0)");
@@ -249,7 +240,7 @@ namespace BakeryHub.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId", "OrderId");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Handshake");
                 });
@@ -258,7 +249,7 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.Property<Guid>("HandshakeId");
 
-                    b.Property<int>("ProductId");
+                    b.Property<Guid>("ProductId");
 
                     b.Property<string>("Comment")
                         .IsRequired()
@@ -278,7 +269,7 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ContactId");
+                    b.Property<Guid>("ContactId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2(0)");
@@ -293,20 +284,17 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<string>("Text")
                         .IsRequired();
 
-                    b.Property<int>("UserId");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "ContactId");
+                    b.HasIndex("ContactId");
 
                     b.ToTable("NotificationLog");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Order", b =>
                 {
-                    b.Property<int>("CustomerId");
-
-                    b.Property<int>("OrderId");
+                    b.Property<Guid>("OrderId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DatePlaced")
                         .HasColumnType("datetime2(0)");
@@ -323,85 +311,80 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<int>("SupplierId");
 
-                    b.HasKey("CustomerId", "OrderId");
+                    b.Property<int>("UserId");
+
+                    b.HasKey("OrderId");
 
                     b.HasIndex("SupplierId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.OrderItem", b =>
                 {
-                    b.Property<int>("CustomerId");
+                    b.Property<Guid>("OrderId");
 
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("ProductId");
+                    b.Property<Guid>("ProductId");
 
                     b.Property<bool>("IsCanceled");
 
                     b.Property<int>("ProductCount");
 
+                    b.Property<int>("SeqNumInOrer");
+
                     b.Property<decimal>("TotalPrice");
 
-                    b.HasKey("CustomerId", "OrderId", "ProductId");
+                    b.HasKey("OrderId", "ProductId");
 
                     b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.OrderPaymentSensitiveInfo", b =>
                 {
-                    b.Property<int>("CustomerId");
-
-                    b.Property<int>("OrderId");
+                    b.Property<Guid>("OrderId");
 
                     b.Property<string>("CVV")
                         .IsRequired()
                         .HasMaxLength(100);
 
+                    b.Property<Guid>("CardPaymentMethodId");
+
                     b.Property<string>("ExpirationDate")
                         .IsRequired()
                         .HasMaxLength(100);
 
-                    b.Property<int>("PaymentMethodId");
+                    b.HasKey("OrderId");
 
-                    b.HasKey("CustomerId", "OrderId");
-
-                    b.HasIndex("CustomerId", "PaymentMethodId");
+                    b.HasIndex("CardPaymentMethodId");
 
                     b.ToTable("OrderPaymentSensitiveInfo");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.OrderSubscription", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<Guid>("ContactId");
 
-                    b.Property<int>("ContactId");
+                    b.Property<Guid>("OrderId");
 
-                    b.Property<int>("CustomerId");
+                    b.HasKey("ContactId", "OrderId");
 
-                    b.Property<int>("OrderId");
-
-                    b.HasKey("UserId", "ContactId", "CustomerId", "OrderId");
-
-                    b.HasIndex("CustomerId", "OrderId");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderSubscription");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Payment", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("PaymentId");
+                    b.Property<Guid>("PaymentId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<int>("CustomerId");
+                    b.Property<Guid>("OrderId");
 
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("PaymentMethodId");
+                    b.Property<Guid>("PaymentMethodId");
 
                     b.Property<int>("Status");
 
@@ -409,23 +392,25 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<int>("TargetUserId");
 
-                    b.HasKey("UserId", "PaymentId");
+                    b.Property<int>("UserId");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("TargetUserId");
 
-                    b.HasIndex("CustomerId", "OrderId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId", "PaymentMethodId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.PaymentMethod", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("PaymentMethodId");
+                    b.Property<Guid>("PaymentMethodId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("IsDeleted");
 
@@ -435,35 +420,34 @@ namespace BakeryHub.Domain.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
-                    b.HasKey("UserId", "PaymentMethodId");
+                    b.Property<int>("UserId");
+
+                    b.HasKey("PaymentMethodId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.PayPalPaymentMethod", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("PaymentMethodId");
+                    b.Property<Guid>("PaymentMethodId");
 
                     b.Property<string>("PayPalAddress")
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.HasKey("UserId", "PaymentMethodId");
+                    b.HasKey("PaymentMethodId");
 
                     b.ToTable("PayPalPaymentMethods");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Product", b =>
                 {
-                    b.Property<int>("SupplierId");
-
-                    b.Property<int>("ProductId");
+                    b.Property<Guid>("ProductId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AvailableNow");
-
-                    b.Property<int>("CategoryId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -472,15 +456,27 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .IsConcurrencyToken();
 
+                    b.Property<Guid?>("MainImageId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255);
 
                     b.Property<decimal>("Price");
 
-                    b.HasKey("SupplierId", "ProductId");
+                    b.Property<int>("ProductCategoryId");
 
-                    b.HasIndex("CategoryId");
+                    b.Property<int>("SupplierId");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("MainImageId")
+                        .IsUnique()
+                        .HasFilter("[MainImageId] IS NOT NULL");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
                 });
@@ -504,11 +500,8 @@ namespace BakeryHub.Domain.Migrations
 
             modelBuilder.Entity("BakeryHub.Domain.ProductImage", b =>
                 {
-                    b.Property<int>("SupplierId");
-
-                    b.Property<int>("ProductId");
-
-                    b.Property<int>("ImageId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("LogicalPath")
                         .IsRequired()
@@ -522,7 +515,11 @@ namespace BakeryHub.Domain.Migrations
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.HasKey("SupplierId", "ProductId", "ImageId");
+                    b.Property<Guid>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
                 });
@@ -531,28 +528,13 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.Property<Guid>("ReviewId");
 
-                    b.Property<int>("ProductId");
+                    b.Property<Guid>("ProductId");
 
-                    b.Property<int>("SupplierId");
+                    b.HasKey("ReviewId", "ProductId");
 
-                    b.HasKey("ReviewId");
-
-                    b.HasIndex("SupplierId", "ProductId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductReviews");
-                });
-
-            modelBuilder.Entity("BakeryHub.Domain.ReportSubscription", b =>
-                {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("ContactId");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("UserId", "ContactId", "Type");
-
-                    b.ToTable("ReportSubscription");
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Review", b =>
@@ -624,10 +606,6 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<bool>("IsCompany");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100);
-
                     b.HasKey("Id");
 
                     b.ToTable("Suppliers");
@@ -640,6 +618,9 @@ namespace BakeryHub.Domain.Migrations
 
                     b.Property<string>("Login")
                         .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Name")
                         .HasMaxLength(100);
 
                     b.Property<string>("Password")
@@ -686,25 +667,25 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.Address", "BillingAddress")
                         .WithMany()
-                        .HasForeignKey("UserId", "BillingAddressId")
+                        .HasForeignKey("BillingAddressId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BakeryHub.Domain.PaymentMethod", "PaymentMethod")
                         .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.CardPaymentMethod", "UserId", "PaymentMethodId")
+                        .HasForeignKey("BakeryHub.Domain.CardPaymentMethod", "PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.CartItem", b =>
                 {
+                    b.HasOne("BakeryHub.Domain.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BakeryHub.Domain.Session")
                         .WithMany("CartItems")
                         .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BakeryHub.Domain.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("SupplierId", "ProductId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -716,34 +697,26 @@ namespace BakeryHub.Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BakeryHub.Domain.Customer", b =>
-                {
-                    b.HasOne("BakeryHub.Domain.User", "User")
-                        .WithOne("Customer")
-                        .HasForeignKey("BakeryHub.Domain.Customer", "Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("BakeryHub.Domain.Delivery", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.DeliverySite")
+                    b.HasOne("BakeryHub.Domain.Address", "CustomerAddress")
+                        .WithMany()
+                        .HasForeignKey("CustomerAddressId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BakeryHub.Domain.DeliverySite", "DeliverySite")
                         .WithMany("Deliveries")
                         .HasForeignKey("DeliverySiteId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BakeryHub.Domain.Address", "CustomerAddress")
-                        .WithMany()
-                        .HasForeignKey("CustomerId", "CustomerAddressId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BakeryHub.Domain.Order", "Order")
-                        .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.Delivery", "CustomerId", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BakeryHub.Domain.Address", "SupplierAddress")
                         .WithMany()
-                        .HasForeignKey("SupplierId", "SupplierAddressId")
+                        .HasForeignKey("SupplierAddressId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -759,7 +732,7 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.Order", "Order")
                         .WithMany()
-                        .HasForeignKey("CustomerId", "OrderId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -775,20 +748,20 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.Contact")
                         .WithMany("Sendings")
-                        .HasForeignKey("UserId", "ContactId")
+                        .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Order", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BakeryHub.Domain.Supplier", "Supplier")
                         .WithMany("Orders")
                         .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BakeryHub.Domain.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -796,38 +769,48 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("CustomerId", "OrderId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.OrderPaymentSensitiveInfo", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.Order", "Order")
-                        .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.OrderPaymentSensitiveInfo", "CustomerId", "OrderId")
+                    b.HasOne("BakeryHub.Domain.CardPaymentMethod", "CardPaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("CardPaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BakeryHub.Domain.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("CustomerId", "PaymentMethodId")
+                    b.HasOne("BakeryHub.Domain.Order", "Order")
+                        .WithOne()
+                        .HasForeignKey("BakeryHub.Domain.OrderPaymentSensitiveInfo", "OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.OrderSubscription", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.Order")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("CustomerId", "OrderId")
+                    b.HasOne("BakeryHub.Domain.Contact", "Contact")
+                        .WithMany("OrderSubscriptions")
+                        .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BakeryHub.Domain.Contact")
-                        .WithMany("OrderSubscriptions")
-                        .HasForeignKey("UserId", "ContactId")
+                    b.HasOne("BakeryHub.Domain.Order", "Order")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Payment", b =>
                 {
+                    b.HasOne("BakeryHub.Domain.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BakeryHub.Domain.PaymentMethod", "PaymentMethod")
+                        .WithMany("Payments")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BakeryHub.Domain.User")
                         .WithMany("ReceivedPayments")
                         .HasForeignKey("TargetUserId")
@@ -836,16 +819,6 @@ namespace BakeryHub.Domain.Migrations
                     b.HasOne("BakeryHub.Domain.User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BakeryHub.Domain.Order", "Order")
-                        .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.Payment", "CustomerId", "OrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BakeryHub.Domain.PaymentMethod")
-                        .WithMany("Payments")
-                        .HasForeignKey("UserId", "PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -861,15 +834,20 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.PaymentMethod", "PaymentMethod")
                         .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.PayPalPaymentMethod", "UserId", "PaymentMethodId")
+                        .HasForeignKey("BakeryHub.Domain.PayPalPaymentMethod", "PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.Product", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.ProductCategory", "Category")
+                    b.HasOne("BakeryHub.Domain.ProductImage", "MainImage")
+                        .WithOne()
+                        .HasForeignKey("BakeryHub.Domain.Product", "MainImageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BakeryHub.Domain.ProductCategory", "ProductCategory")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ProductCategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BakeryHub.Domain.Supplier")
@@ -882,28 +860,20 @@ namespace BakeryHub.Domain.Migrations
                 {
                     b.HasOne("BakeryHub.Domain.Product")
                         .WithMany("Images")
-                        .HasForeignKey("SupplierId", "ProductId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BakeryHub.Domain.ProductReview", b =>
                 {
-                    b.HasOne("BakeryHub.Domain.Review", "Review")
-                        .WithOne()
-                        .HasForeignKey("BakeryHub.Domain.ProductReview", "ReviewId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BakeryHub.Domain.Product")
+                    b.HasOne("BakeryHub.Domain.Product", "Product")
                         .WithMany("ProductReviews")
-                        .HasForeignKey("SupplierId", "ProductId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
 
-            modelBuilder.Entity("BakeryHub.Domain.ReportSubscription", b =>
-                {
-                    b.HasOne("BakeryHub.Domain.Contact")
-                        .WithMany("ReportSubscriptions")
-                        .HasForeignKey("UserId", "ContactId")
+                    b.HasOne("BakeryHub.Domain.Review", "Review")
+                        .WithMany()
+                        .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

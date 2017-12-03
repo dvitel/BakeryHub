@@ -17,22 +17,22 @@ CREATE TRIGGER onOrderStateChange
 	DELETE sensitive 
 	FROM OrderPaymentSensitiveInfo sensitive
 	JOIN  		
-		(SELECT newOrders.CustomerId, newOrders.OrderId 
+		(SELECT newOrders.OrderId 
 		 FROM 
 			inserted newOrders
 			JOIN 
-			deleted oldOrders ON newOrders.CustomerId = oldOrders.CustomerId AND newOrders.OrderId = oldOrders.OrderId
-		 WHERE newOrders.Status > 0 AND oldOrders.Status = 0) as statusIsNotInitial(CustomerId, OrderId)
-	ON sensitive.CustomerId = statusIsNotInitial.CustomerId AND sensitive.OrderId = statusIsNotInitial.OrderId
+			deleted oldOrders ON newOrders.OrderId = oldOrders.OrderId
+		 WHERE newOrders.Status > 0 AND oldOrders.Status = 0) as statusIsNotInitial(OrderId)
+	ON sensitive.OrderId = statusIsNotInitial.OrderId
 
-	SELECT inserted.CustomerId, inserted.OrderId INTO #finalizedOrders
+	SELECT inserted.OrderId INTO #finalizedOrders
 	FROM inserted WHERE [Status] IN 
 		(6, --Delivered
 		 1) --Canceled, PaymentFialed goes to Canceled after some period of inactivity
 
 	SELECT Id INTO #handshakeToDelete
 	FROM Handshake h
-	JOIN #finalizedOrders o ON h.CustomerId = o.CustomerId AND h.OrderId = o.OrderId
+	JOIN #finalizedOrders o ON h.OrderId = o.OrderId
 
 	DELETE HandshakeComments WHERE HandshakeId IN (SELECT Id FROM #handshakeToDelete)
 

@@ -6,8 +6,7 @@ namespace BakeryHub.Domain
 {
     public class PayPalPaymentMethod
     {
-        public int UserId { get; set; }
-        public int PaymentMethodId { get; set; }
+        public Guid PaymentMethodId { get; set; }   
         public string PayPalAddress { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
     }

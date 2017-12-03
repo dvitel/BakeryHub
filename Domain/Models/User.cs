@@ -8,13 +8,13 @@ namespace BakeryHub.Domain
     {
         public enum PasswordEncryption { Plain, MD5, DES }
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
         public PasswordEncryption PasswordEncryptionAlgorithm { get; set; }
         public string Salt { get; set; }
         public Guid SessionId { get; set; }
         public Session Session { get; set; }
-        public Customer Customer { get; set; }
         public Supplier Supplier { get; set; }
         public DeliverySite DeliverySite { get; set; }
         public IList<Address> Addresses { get; set; }
@@ -24,6 +24,7 @@ namespace BakeryHub.Domain
         public IList<PaymentMethod> PaymentMethods { get; set; }
         public IList<Review> Reviews { get; set; }
         public IList<Review> ReceivedReviews { get; set; }
+        public IList<Order> Orders { get; set; }
 
     }
 }
