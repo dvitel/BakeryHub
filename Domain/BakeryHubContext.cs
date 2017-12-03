@@ -35,6 +35,7 @@ namespace BakeryHub.Domain
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<ProductReview> ProductReviews { get; set; }
         public BakeryHubContext(DbContextOptions<BakeryHubContext> opts) : base(opts)
         {
 
@@ -505,7 +506,7 @@ namespace BakeryHub.Domain
 
             modelBuilder
                 .Entity<NotificationLog>()
-                .HasKey(n => new { n.UserId, n.ContactId, n.MessageId });
+                .HasKey(n => n.Id);
 
             modelBuilder
                 .Entity<OrderPaymentSensitiveInfo>()

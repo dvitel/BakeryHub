@@ -1,0 +1,6 @@
+CREATE PROCEDURE naiveCleanup
+AS
+BEGIN
+DELETE NotificationLog WHERE [Date] < DATEADD(day, -9, GETUTCDATE())
+END
+GO

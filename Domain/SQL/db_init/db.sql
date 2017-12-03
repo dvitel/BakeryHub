@@ -511,11 +511,14 @@ DELETE ProductCategories
 
 GO
 
---SELECT * FROM ProductCategories
+--DELETE ProductCategories
 
 INSERT ProductCategories (Id, Description, Name) VALUES 
 	(1, 'Different kind of cakes: with cream, chocolate, etc...', 'Cakes'),
 	(2, 'Wheat, Rye, Pita breads, etc...', 'Bread')
+
+INSERT ProductCategories (Id, Description, Name) VALUES 
+	(3, 'Cookies, etc...', 'Pastry')
 
 GO
 
@@ -1950,11 +1953,14 @@ CREATE TABLE [ProductCategories] (
 
 GO
 
---SELECT * FROM ProductCategories
+--DELETE ProductCategories
 
 INSERT ProductCategories (Id, Description, Name) VALUES 
 	(1, 'Different kind of cakes: with cream, chocolate, etc...', 'Cakes'),
 	(2, 'Wheat, Rye, Pita breads, etc...', 'Bread')
+
+INSERT ProductCategories (Id, Description, Name) VALUES 
+	(3, 'Cookies, etc...', 'Pastry')
 
 GO
 
@@ -1964,6 +1970,101 @@ GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20171202153546_fix_NULL_constraints', N'2.0.0-rtm-26452');
+
+GO
+
+DROP TABLE [FeedbackSubscription];
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171202192252_FeedbackSubscription_Removed', N'2.0.0-rtm-26452');
+
+GO
+
+ALTER TABLE [ReportSubscription] DROP CONSTRAINT [PK_ReportSubscription];
+
+GO
+
+ALTER TABLE [ReportSubscription] ADD CONSTRAINT [PK_ReportSubscription] PRIMARY KEY ([UserId], [ContactId], [Type]);
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171202195100_ReportSubscription_KeyFix', N'2.0.0-rtm-26452');
+
+GO
+
+ALTER TABLE [ProductReview] DROP CONSTRAINT [FK_ProductReview_Reviews_ReviewId];
+
+GO
+
+ALTER TABLE [ProductReview] DROP CONSTRAINT [FK_ProductReview_Products_SupplierId_ProductId];
+
+GO
+
+ALTER TABLE [ProductReview] DROP CONSTRAINT [PK_ProductReview];
+
+GO
+
+EXEC sp_rename N'ProductReview', N'ProductReviews';
+
+GO
+
+EXEC sp_rename N'ProductReviews.IX_ProductReview_SupplierId_ProductId', N'IX_ProductReviews_SupplierId_ProductId', N'INDEX';
+
+GO
+
+ALTER TABLE [ProductReviews] ADD CONSTRAINT [PK_ProductReviews] PRIMARY KEY ([ReviewId]);
+
+GO
+
+ALTER TABLE [ProductReviews] ADD CONSTRAINT [FK_ProductReviews_Reviews_ReviewId] FOREIGN KEY ([ReviewId]) REFERENCES [Reviews] ([Id]) ON DELETE NO ACTION;
+
+GO
+
+ALTER TABLE [ProductReviews] ADD CONSTRAINT [FK_ProductReviews_Products_SupplierId_ProductId] FOREIGN KEY ([SupplierId], [ProductId]) REFERENCES [Products] ([SupplierId], [ProductId]) ON DELETE NO ACTION;
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171202213201_ProductReviewsFix', N'2.0.0-rtm-26452');
+
+GO
+
+ALTER TABLE [NotificationLog] DROP CONSTRAINT [PK_NotificationLog];
+
+GO
+
+DECLARE @var16 sysname;
+SELECT @var16 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'NotificationLog') AND [c].[name] = N'MessageId');
+IF @var16 IS NOT NULL EXEC(N'ALTER TABLE [NotificationLog] DROP CONSTRAINT [' + @var16 + '];');
+ALTER TABLE [NotificationLog] DROP COLUMN [MessageId];
+
+GO
+
+ALTER TABLE [NotificationLog] ADD [Id] uniqueidentifier NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000';
+
+GO
+
+ALTER TABLE [NotificationLog] ADD CONSTRAINT [PK_NotificationLog] PRIMARY KEY ([Id]);
+
+GO
+
+CREATE INDEX [IX_NotificationLog_UserId_ContactId] ON [NotificationLog] ([UserId], [ContactId]);
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171202224407_NotificationLogKey', N'2.0.0-rtm-26452');
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20171203004449_NotificationLogPartitioning', N'2.0.0-rtm-26452');
 
 GO
 

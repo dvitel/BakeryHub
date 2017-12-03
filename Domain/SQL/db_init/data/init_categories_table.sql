@@ -1,4 +1,4 @@
---SELECT * FROM ProductCategories
+--DELETE ProductCategories
 
 INSERT ProductCategories (Id, Description, Name) VALUES 
 	(1, 'Different kind of cakes: with cream, chocolate, etc...', 'Cakes'),

@@ -11,9 +11,10 @@ using System;
 namespace BakeryHub.Domain.Migrations
 {
     [DbContext(typeof(BakeryHubContext))]
-    partial class BakeryHubContextModelSnapshot : ModelSnapshot
+    [Migration("20171202213201_ProductReviewsFix")]
+    partial class ProductReviewsFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,10 +275,11 @@ namespace BakeryHub.Domain.Migrations
 
             modelBuilder.Entity("BakeryHub.Domain.NotificationLog", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("UserId");
 
                     b.Property<int>("ContactId");
+
+                    b.Property<long>("MessageId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2(0)");
@@ -292,11 +294,7 @@ namespace BakeryHub.Domain.Migrations
                     b.Property<string>("Text")
                         .IsRequired();
 
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "ContactId");
+                    b.HasKey("UserId", "ContactId", "MessageId");
 
                     b.ToTable("NotificationLog");
                 });
