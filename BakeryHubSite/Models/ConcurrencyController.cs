@@ -39,7 +39,7 @@ namespace BakeryHubSite.Models
                 } else
                 {
                     return "Not enogh product now." +
-                            "Do you wish to proceed with hanshake?"
+                            "Do you wish to proceed with hanshake?";
                 }
             }
         }
