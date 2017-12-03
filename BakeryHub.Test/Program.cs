@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1330,6 +1332,137 @@ namespace BakeryHub.Test
             }
         }
 
+        static async Task GenerateHanshakeData(IConfiguration config, string env)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<BakeryHubContext>();
+            optionsBuilder.UseSqlServer(config[$"ConnectionString:{env}"])
+                .EnableSensitiveDataLogging();
+            using (var context = new BakeryHubContext(optionsBuilder.Options))
+            {
+                var orders =
+                    await (from c in context.Orders.Include(o => o.OrderItems) select c).ToListAsync();
+
+                var handshakes =
+                    genN(1000, i =>
+                    {
+                        var order = randSet(orders);
+                        return
+                            new Handshake
+                            {
+                                CustomerId = order.CustomerId,
+                                OrderId = order.OrderId,
+                                SeqNum = randInt(0, 100),
+                                SupplierId = order.SupplierId,
+                                TimeStamp = randDateTime(10),
+                                Turn = randSet(new []
+                                {
+                                    Handshake.HanshakeTurn.Customer,
+                                    Handshake.HanshakeTurn.Supplier
+                                }),
+                                Comments = 
+                                    order.OrderItems.Select(item => new HandshakeComment
+                                    {
+                                        Comment = randSet(new []
+                                        {
+                                            "Need custom decoration",
+                                            "Is discount available",
+                                            "OK",
+                                            "Canceled"
+                                        }),
+                                        IsCanceled = randBool(0.9),
+                                        NewPrice = 
+                                            randBool(0.9) ? (decimal?)(100 * rand.NextDouble() + 5) : null,
+                                        ProductId = item.ProductId
+                                    }).ToList()                               
+                            };
+                    }
+
+                    );
+                await context.Handshake.AddRangeAsync(handshakes);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        static async Task GeneratePaymentMethods(IConfiguration config, string env)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<BakeryHubContext>();
+            optionsBuilder.UseSqlServer(config[$"ConnectionString:{env}"])
+                .EnableSensitiveDataLogging();
+            using (var context = new BakeryHubContext(optionsBuilder.Options))
+            {
+                var customers =
+                    await (from c in context.Customers.Include(o => o.User) select c).ToListAsync();
+
+                var pmd = new Dictionary<int, int>();
+                var cardPaymentMethods =
+                    genN(1000, i =>
+                    {
+                        var customer = randSet(customers);
+                        var nextId =
+                            pmd.ContainsKey(customer.Id) ? pmd[customer.Id] + 1 : 1;
+                        pmd[customer.Id] = nextId;
+                        return
+                            new CardPaymentMethod
+                            {
+                                NameOnCard = customer.Name,
+                                CardNumber = "1234567812345678",
+                                UserId = customer.Id,
+                                PaymentMethodId = nextId,
+                                PaymentMethod = new PaymentMethod
+                                {
+                                    IsDeleted = false,
+                                    PaymentMethodId = nextId,
+                                    UserId = customer.Id,
+                                    Type = PaymentMethod.PaymentMethodType.Card,
+                                    UIDesc = "1234 5678 1234 5678",                                    
+                                },
+                                BillingAddress =
+                                    new Address
+                                    {
+                                        UserId = customer.Id,                                        
+                                        AddressId = 100 + nextId,
+                                        City = "Sait Petersburg",
+                                        CountryId = "US",
+                                        StateId = "FL",
+                                        IsBilling = false,
+                                        IsDeleted = false,
+                                        Street = "",
+                                        Zip = ""
+                                    }                                
+                            };
+                    }).ToList();
+
+                using (var table = new DataTable()) {
+                    table.Columns.Add("id", typeof(int));
+                    foreach (var u in customers)
+                    {
+                        var row = table.NewRow();
+                        row["id"] = u.Id;
+                        table.Rows.Add(row);
+                    }
+                    var sqlParameter = new SqlParameter("@ids", table);
+                    sqlParameter.SqlDbType = SqlDbType.Structured;
+                    sqlParameter.TypeName = "dbo.IntId";
+                    var orders =
+                        (await
+                        context.Orders.FromSql("SELECT * FROM Orders WHERE CustomerId IN (SELECT id FROM @ids)", sqlParameter).ToListAsync())
+                        .GroupBy(o => o.CustomerId).ToDictionary(g => g.Key, g => g.ToList());
+                    var sensitive =
+                        cardPaymentMethods.Where(p => randBool(0.5) && orders.ContainsKey(p.UserId)).Select(p => new OrderPaymentSensitiveInfo
+                        {
+                            CustomerId = p.UserId,
+                            CVV = "123",
+                            ExpirationDate = randDateTime(DateTime.UtcNow.AddYears(1), DateTime.UtcNow.AddYears(2)).ToString(),
+                            OrderId = randSet(orders[p.UserId]).OrderId,
+                            PaymentMethod = p.PaymentMethod
+                        }).GroupBy(s => new { s.CustomerId, s.OrderId }).Select(g => g.First());
+                    await context.CardPaymentMethods.AddRangeAsync(cardPaymentMethods);
+                    await context.OrderPaymentSensitiveInfo.AddRangeAsync(sensitive);
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
         static async Task Main(string[] args)
         {
             try
@@ -1358,7 +1491,8 @@ namespace BakeryHub.Test
 
                 //await CreateCartItems(config, env);
                 //await CreateReviews(config, env);
-                await GenerateNotificationLogs(config, env);
+                //await GenerateNotificationLogs(config, env);
+                await GeneratePaymentMethods(config, env);
                 System.Console.WriteLine("Done!"); 
             }
             catch (Exception e)
