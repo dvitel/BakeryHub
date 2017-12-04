@@ -6,10 +6,10 @@ namespace BakeryHub.Domain
 {
     public class Delivery
     {        
-        public enum DeliveryStatus { Requested, Canceled, Taken }
+        public enum DeliveryStatus { Waiting, Requested, Canceled, Taken }
         public Guid DeliveryId { get; set; }
         public Guid OrderId { get; set; }        
-        public int DeliverySiteId { get; set; }
+        public int? DeliverySiteId { get; set; }
         public Guid SupplierAddressId { get; set; } 
         //public int SupplierContactId { get; set; }        
         public Guid CustomerAddressId { get; set; } 

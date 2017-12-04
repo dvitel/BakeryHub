@@ -1322,7 +1322,7 @@ namespace BakeryHub.Test
                 var builder = new ConfigurationBuilder();
                 builder.AddJsonFile("appsettings.json");
                 var config = builder.Build();
-                var env = "Production";
+                var env = "Development";
                 ////await TestSMS(config);
                 ////await TestEmail(config);
 
@@ -1347,8 +1347,9 @@ namespace BakeryHub.Test
 
                 //await CreateCartItems(config, env);
                 //await CreateReviews(config, env);
-                await GenerateNotificationLogs(config, env);
-                await GeneratePaymentMethods(config, env);
+                //await GenerateNotificationLogs(config, env);
+                //await GeneratePaymentMethods(config, env);
+                await GenerateHanshakeData(config, env);
                 System.Console.WriteLine("Done!"); 
             }
             catch (Exception e)

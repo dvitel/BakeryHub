@@ -43,14 +43,36 @@ namespace BakeryHubSite.Models
                 }
             }
         }
-        public async Task<IActionResult> Index(int? id, int? pid, int? cnt)
+        public async Task<IActionResult> Index2(Guid? id, int? cnt)
         {
             Response.ContentType = "text/plain";
-            if (id == null || pid == null)
+            if (id == null)
                 return Content("No product was specified for search");
-            var product = await db.Products.FindAsync(id.Value, pid.Value);
+            var product = await db.Products.FindAsync(id.Value);
             //here we have long running code
             return Content(await ChangeProduct(product, cnt ?? 1));
         }
+
+        public async Task<IActionResult> Index(Guid? id, int? cnt)
+        {
+            try
+            {
+                Response.ContentType = "text/plain";
+                if (id == null)
+                    return Content("No product was specified for search");
+                var product = await db.Products.FindAsync(id.Value);
+                //here we have long running code
+                product.AvailableNow = product.AvailableNow - (cnt ?? 1);
+                product.LastUpdated = DateTime.UtcNow;
+                db.Products.Update(product);
+                await db.SaveChangesAsync();
+                return Content($"OK, new available is {product.AvailableNow}");
+            }
+            catch (Exception e)
+            {
+                return Content(e.ToString());
+            }
+        }
+
     }
 }
