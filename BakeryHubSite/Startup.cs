@@ -71,6 +71,13 @@ namespace BakeryHub
 
             app.UseStaticFiles();
 
+            //app.Use(async (context, next) =>
+            //    {
+
+            //        await next.Invoke();
+            //    }
+            //);
+
             app.UseAuthentication();
 
             app.UseMvc(routes =>

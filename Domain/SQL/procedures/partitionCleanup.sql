@@ -5,8 +5,7 @@ BEGIN
 CREATE TABLE [dbo].[TempNotificationLog](
 	[Date] [datetime2](0) NOT NULL,
     [Id] [uniqueidentifier] NOT NULL,
-	[UserId] [int] NOT NULL,
-	[ContactId] [int] NOT NULL,
+	[ContactId] uniqueidentifier NOT NULL,
 	[ErrorMessage] [nvarchar](max) NULL,
 	[Status] [int] NOT NULL,
 	[Subject] [nvarchar](255) NULL,

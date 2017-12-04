@@ -133,7 +133,7 @@ namespace BakeryHubSite.Controllers
                         if (user.Supplier != null)
                             return RedirectToAction("Index", "Seller");
                         else
-                            return RedirectToAction("Index", "Order");
+                            return RedirectToAction("Register", "Seller");
                     }
                     else
                         return Redirect(loginForm.Redirect);
@@ -164,7 +164,21 @@ namespace BakeryHubSite.Controllers
                 if (similar > 0)
                     ModelState.AddModelError("Login", "Login is being used by other user");
                 var (alg, pwd, salt) = ComputePassword(register);
-                await db.Users.AddAsync(new BakeryHub.Domain.User { Login = register.Login, Password = pwd, Salt = salt, PasswordEncryptionAlgorithm = alg });
+                var user = new User
+                {
+                    Login = register.Login,
+                    Password = pwd,
+                    Salt = salt,
+                    PasswordEncryptionAlgorithm = alg,
+                    Session = new Session
+                    {
+                        FirstVisit = DateTime.UtcNow,
+                        LastVisit = DateTime.UtcNow,
+                        IP = Request.HttpContext.Connection.RemoteIpAddress.ToString(),
+                        UserAgent = Request.Headers["User-Agent"]
+                    }
+                };
+                await db.Users.AddAsync(user);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Login");
             }

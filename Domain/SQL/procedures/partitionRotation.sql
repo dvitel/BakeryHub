@@ -37,3 +37,9 @@ END
 	
 END
 GO
+
+/*
+SELECT * FROM 
+	sys.partition_range_values v
+	JOIN sys.partition_functions f ON f.function_id = v.function_id WHERE name='bucketsPerDay'
+*/

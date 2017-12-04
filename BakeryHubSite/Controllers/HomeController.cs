@@ -5,14 +5,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BakeryHub.Models;
+using BakeryHub.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakeryHub.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        BakeryHubContext db;
+        public HomeController(BakeryHubContext context) => db = context;
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var products =
+                await (
+                    from p in db.Products.Include(p => p.MainImage) select p
+                ).ToListAsync();
+            return View(products);
         }
 
         public IActionResult About()

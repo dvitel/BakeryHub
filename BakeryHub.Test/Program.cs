@@ -1158,7 +1158,7 @@ namespace BakeryHub.Test
                     await (from c in context.Contacts select c).ToListAsync();
 
                 var notifications =
-                    genN(1000, i =>
+                    genN(10000, i =>
                         {
                             var contact = randSet(contacts);
                             var status =
@@ -1169,7 +1169,7 @@ namespace BakeryHub.Test
                                 new NotificationLog
                                 {
                                     ContactId = contact.ContactId,
-                                    Date = randDateTime(13), //randDateTime(1, DateTime.UtcNow.AddDays(2)),
+                                    Date = randDateTime(14, DateTime.UtcNow.AddDays(2)),
                                     Status = status,
                                     ErrorMessage =
                                         status == NotificationLog.NotificationDelivery.Delivered ? null
@@ -1347,9 +1347,9 @@ namespace BakeryHub.Test
 
                 //await CreateCartItems(config, env);
                 //await CreateReviews(config, env);
-                //await GenerateNotificationLogs(config, env);
+                await GenerateNotificationLogs(config, env);
                 //await GeneratePaymentMethods(config, env);
-                await GenerateHanshakeData(config, env);
+                //await GenerateHanshakeData(config, env);
                 System.Console.WriteLine("Done!"); 
             }
             catch (Exception e)
